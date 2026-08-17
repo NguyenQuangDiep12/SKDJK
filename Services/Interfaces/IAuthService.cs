@@ -1,6 +1,6 @@
 ﻿using SKDJK.Models;
 using SKDJK.Dtos;
-using SKDJK.Models.Commons;
+using SKDJK.Models.commons;
 
 namespace SKDJK.Services.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿namespace SKDJK.Models.Commons
+﻿namespace SKDJK.Models.commons
 {
     public record Error(string Code, string Message)
     {

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace SKDJK.Models.Commons
+namespace SKDJK.Models.commons
 {
     public class Result
     {

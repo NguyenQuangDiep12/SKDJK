@@ -2,19 +2,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SKDJK.Models.commons;
 using SKDJK.Services.Interfaces;
-using SKDJK.ViewModels;
 using System.Security.Claims;
-using SKDJK.Models.Commons;
 
 namespace SKDJK.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
+
         public AuthController(IAuthService authService)
         {
-            this._authService = authService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -22,23 +22,53 @@ namespace SKDJK.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(
+            string fullName,
+            string email,
+            string password)
         {
-            if (!ModelState.IsValid)
+            // Không còn ViewModel nên validate thủ công
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                return View(model);
+                ModelState.AddModelError(
+                    "FullName",
+                    "Vui lòng nhập họ tên");
             }
 
-            var result = await _authService.RegisterAsync(model.FullName, model.Email, model.Password);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ModelState.AddModelError(
+                    "Email",
+                    "Vui lòng nhập email");
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                ModelState.AddModelError(
+                    "Password",
+                    "Vui lòng nhập mật khẩu");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var result = await _authService.RegisterAsync(
+                fullName,
+                email,
+                password);
 
             if (!result.IsSuccess)
             {
-                if(result.Error == Error.EmailAlreadyExist)
+                if (result.Error == Error.EmailAlreadyExist)
                 {
                     ModelState.AddModelError(
-                        nameof(model.Email), result.Error.Message);
+                        "Email",
+                        result.Error.Message);
                 }
                 else
                 {
@@ -46,8 +76,10 @@ namespace SKDJK.Controllers
                         string.Empty,
                         result.Error.Message);
                 }
-                    return View(model);
+
+                return View();
             }
+
             return RedirectToAction(nameof(Login));
         }
 
@@ -59,59 +91,85 @@ namespace SKDJK.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(
+            string email,
+            string password,
+            bool rememberMe)
         {
-            if (!ModelState.IsValid)
+            // Validate thủ công
+            if (string.IsNullOrWhiteSpace(email))
             {
-                return View(model);
+                ModelState.AddModelError(
+                    "Email",
+                    "Vui lòng nhập email");
             }
 
-            var result = await _authService.LoginAsync(model.Email, model.Password);
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                ModelState.AddModelError(
+                    "Password",
+                    "Vui lòng nhập mật khẩu");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var result = await _authService.LoginAsync(
+                email,
+                password);
 
             if (!result.IsSuccess)
             {
-                ModelState.AddModelError(string.Empty, result.Error.Message);
+                ModelState.AddModelError(
+                    string.Empty,
+                    result.Error.Message);
 
-                return View(model);
+                return View();
             }
 
-            var user = result.Value; // tra ve du lieu la authenticatedUserDto
-
+            var user = result.Value!;
 
             var claims = new List<Claim>
             {
-                new Claim
-                (
+                new Claim(
                     ClaimTypes.NameIdentifier,
-                    user.UserId.ToString()
-                ),
+                    user.UserId.ToString()),
+
                 new Claim(
                     ClaimTypes.Name,
-                    user.FullName
-                ),
+                    user.FullName),
+
                 new Claim(
                     ClaimTypes.Email,
-                    user.Email
-                ),
+                    user.Email),
+
                 new Claim(
                     ClaimTypes.Role,
-                    user.RoleName
-                )
+                    user.RoleName)
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
 
             var principal = new ClaimsPrincipal(identity);
 
+            var authenticationProperties =
+                new AuthenticationProperties
+                {
+                    IsPersistent = rememberMe
+                };
 
-            var authenticationProperty = new AuthenticationProperties
-            {
-                IsPersistent = true,
-            };
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                authenticationProperties);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperty);
-
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(
+                "Index",
+                "Home");
         }
 
         [Authorize]
@@ -122,20 +180,19 @@ namespace SKDJK.Controllers
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
-            // xoa sach session data tam
             HttpContext.Session.Clear();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(
+                "Index",
+                "Home");
         }
 
-        // Forbidden
         [HttpGet]
         public IActionResult Forbidden()
         {
             return View();
         }
 
-        // NotFound
         [HttpGet]
         public IActionResult Notfound()
         {

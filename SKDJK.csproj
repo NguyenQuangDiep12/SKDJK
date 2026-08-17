@@ -8,9 +8,17 @@
 
   <ItemGroup>
     <Compile Remove="Views\Vocabulary\**" />
+    <Compile Remove="wwwroot\NewFolder\**" />
     <Content Remove="Views\Vocabulary\**" />
+    <Content Remove="wwwroot\NewFolder\**" />
     <EmbeddedResource Remove="Views\Vocabulary\**" />
+    <EmbeddedResource Remove="wwwroot\NewFolder\**" />
     <None Remove="Views\Vocabulary\**" />
+    <None Remove="wwwroot\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".gitignore" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +39,6 @@
     <Folder Include="Views\Lesson\" />
     <Folder Include="Views\Progress\" />
     <Folder Include="Views\Test\" />
-    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
 </Project>

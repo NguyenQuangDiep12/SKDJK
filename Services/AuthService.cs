@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SKDJK.Data;
 using SKDJK.Dtos;
-using SKDJK.Models.Commons;
+using SKDJK.Models.commons;
 using SKDJK.Services.Interfaces;
 using SKDJK.Models.enums;
 using SKDJK.Models;
