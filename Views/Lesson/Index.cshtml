@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Bài học";
+}
+
+<section class="user-page study-page">
+    <div class="lesson-tabs"
+         role="tablist"
+         aria-label="Nội dung bài học">
+
+        <button type="button"
+                class="lesson-tab active"
+                data-lesson-tab="vocabulary">
+            Từ vựng
+        </button>
+
+        <button type="button"
+                class="lesson-tab"
+                data-lesson-tab="grammar">
+            Ngữ pháp
+        </button>
+
+        <button type="button"
+                class="lesson-tab"
+                data-lesson-tab="listening">
+            Luyện nghe
+        </button>
+
+        <button type="button"
+                class="lesson-tab"
+                data-lesson-tab="speaking">
+            Luyện nói
+        </button>
+    </div>
+
+    <div class="lesson-tab-content">
+
+        <div class="lesson-panel active"
+             data-lesson-panel="vocabulary">
+            <partial name="Lessons/_LessonVocabulary" />
+        </div>
+
+        <div class="lesson-panel"
+             data-lesson-panel="grammar">
+            <partial name="Lessons/_LessonGrammar" />
+        </div>
+
+        <div class="lesson-panel"
+             data-lesson-panel="listening">
+            <partial name="Lessons/_LessonListening" />
+        </div>
+
+        <div class="lesson-panel"
+             data-lesson-panel="speaking">
+            <partial name="Lessons/_LessonSpeaking" />
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/lesson-tabs.js" asp-append-version="true"></script>
+}

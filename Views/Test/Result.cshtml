@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Kết quả bài kiểm tra";
+}
+
+<section class="user-page test-result-page">
+
+    <header class="result-heading">
+        <h1>Kết quả bài kiểm tra</h1>
+        <p>Xem kết quả và chi tiết bài làm của bạn.</p>
+    </header>
+
+    <section class="ui-card result-summary-card">
+
+        <div class="result-score-side">
+            <span>KẾT QUẢ</span>
+
+            <div class="result-score-circle">
+                <strong>85%</strong>
+            </div>
+
+            <strong class="result-pass-text">ĐẠT</strong>
+        </div>
+
+        <div class="result-details">
+            <p>⚙ Điểm số: <strong>85 /100</strong></p>
+            <p class="status-success">✓ Số câu đúng: <strong>17</strong></p>
+            <p class="status-danger">✕ Số câu sai: <strong>3</strong></p>
+            <p>☷ Tổng số câu: <strong>20</strong></p>
+            <p>◷ Thời gian làm bài: <strong>22:38</strong></p>
+            <p>▣ Ngày nộp bài: <strong>20/05/2025 14:30</strong></p>
+        </div>
+
+    </section>
+
+    <div class="result-badge">
+        ✓ ĐẠT YÊU CẦU
+    </div>
+
+    <section class="ui-card result-questions-card">
+        <div class="result-legend">
+            <span class="status-success">● Đúng</span>
+            <span class="status-danger">■ Sai</span>
+            <span>○ Chưa trả lời</span>
+        </div>
+
+        <h2>Câu hỏi</h2>
+
+        <div class="result-question-grid">
+            @for (var i = 1; i <= 20; i++)
+            {
+                var css = i == 4 || i == 8
+                ? "wrong"
+                : "correct";
+
+                <button type="button"
+                        class="@css">
+                    @i
+                </button>
+            }
+        </div>
+    </section>
+
+    <div class="result-actions">
+        <button type="button"
+                class="ui-secondary-button">
+            ↻ Làm lại
+        </button>
+
+        <a asp-controller="User"
+           asp-action="Tests"
+           class="ui-dark-button">
+            ← Quay lại danh sách
+        </a>
+    </div>
+
+</section>

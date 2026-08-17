@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Làm bài kiểm tra";
+}
+
+<section class="user-page test-take-page">
+
+    <div class="test-top-card">
+        <div>
+            <strong>Làm bài kiểm tra</strong>
+            <p>Tên bài: Ngữ pháp Cơ bản</p>
+            <p>Cấp độ: Cấp độ 1</p>
+            <p>Số câu: 20 câu</p>
+            <p>Thời gian: 25 phút</p>
+        </div>
+
+        <div class="test-time-box">
+            <span>Thời gian còn lại</span>
+            <strong>22:15</strong>
+        </div>
+    </div>
+
+    <div class="test-progress-label">
+        <span>Câu 5 / 20</span>
+        <strong>25%</strong>
+    </div>
+
+    <div class="progress-bar test-progress">
+        <div style="width:25%"></div>
+    </div>
+
+    <article class="ui-card question-card">
+        <h2>Câu 5. Chọn đáp án đúng.</h2>
+        <p>Đây là nội dung câu hỏi hiển thị ở đây.</p>
+    </article>
+
+    <div class="test-answer-list">
+        <label class="test-answer-option">
+            <input type="radio" name="answer" />
+            <span>A. Đáp án A</span>
+        </label>
+
+        <label class="test-answer-option selected">
+            <input type="radio" name="answer" checked />
+            <span>B. Đáp án B</span>
+        </label>
+
+        <label class="test-answer-option">
+            <input type="radio" name="answer" />
+            <span>C. Đáp án C</span>
+        </label>
+
+        <label class="test-answer-option">
+            <input type="radio" name="answer" />
+            <span>D. Đáp án D</span>
+        </label>
+    </div>
+
+    <div class="question-navigation">
+        <button type="button" class="ui-secondary-button">Câu trước</button>
+
+        <div class="question-number-list">
+            <button type="button">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+            <button type="button">4</button>
+            <button type="button" class="active">5</button>
+            <button type="button">6</button>
+            <span>...</span>
+            <button type="button">20</button>
+        </div>
+
+        <button type="button" class="ui-secondary-button">Câu tiếp theo</button>
+    </div>
+
+    <a asp-controller="User"
+       asp-action="TestResult"
+       class="ui-primary-button submit-test-button">
+        Nộp bài
+    </a>
+
+</section>

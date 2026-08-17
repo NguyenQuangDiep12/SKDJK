@@ -1,0 +1,133 @@
+﻿@model SKDJK.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+    ViewData["HideNavigation"] = true;
+}
+
+<div class="auth-container">
+
+    <div class="auth-brand">
+        <div class="auth-logo">A</div>
+
+        <h1>
+            Hệ thống học ngoại ngữ trực tuyến
+        </h1>
+    </div>
+
+    <section class="auth-card">
+
+        <h2>Đăng ký</h2>
+
+        <p>
+            Tạo tài khoản mới để bắt đầu học.
+        </p>
+
+        <form asp-controller="Auth"
+              asp-action="Register"
+              method="post"
+              class="auth-form">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="message-box">
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="FullName"></label>
+
+                <input asp-for="FullName"
+                       placeholder="Nhập họ và tên" />
+
+                <span asp-validation-for="FullName"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label asp-for="Email"></label>
+
+                <input asp-for="Email"
+                       placeholder="Nhập email của bạn" />
+
+                <span asp-validation-for="Email"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label asp-for="Password"></label>
+
+                <div class="password-box">
+
+                    <input asp-for="Password"
+                           id="registerPassword"
+                           placeholder="Nhập mật khẩu" />
+
+                    <button type="button"
+                            class="password-toggle"
+                            data-password-target="registerPassword">
+                        👁
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="Password"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label asp-for="ConfirmPassword"></label>
+
+                <div class="password-box">
+
+                    <input asp-for="ConfirmPassword"
+                           id="confirmPassword"
+                           placeholder="Nhập lại mật khẩu" />
+
+                    <button type="button"
+                            class="password-toggle"
+                            data-password-target="confirmPassword">
+                        👁
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="ConfirmPassword"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <button type="submit"
+                    class="primary-button">
+                Tạo tài khoản
+            </button>
+
+        </form>
+
+    </section>
+
+    <p class="auth-switch">
+
+        Đã có tài khoản?
+
+        <a asp-controller="Auth"
+           asp-action="Login">
+            Đăng nhập
+        </a>
+
+    </p>
+
+</div>

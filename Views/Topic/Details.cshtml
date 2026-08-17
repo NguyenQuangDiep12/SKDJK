@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết chủ đề";
+}
+
+<section class="user-page topic-details-page">
+    <article class="topic-detail-card">
+        <div class="topic-detail-image">▧</div>
+
+        <div class="topic-detail-content">
+            <h1>Du lịch và đi biển</h1>
+
+            <p>
+                Chủ đề giúp bạn nắm vững từ vựng, ngữ pháp và kỹ năng giao tiếp
+                liên quan đến chủ đề du lịch.
+            </p>
+
+            <div class="topic-meta-grid">
+                <div>
+                    <span>Cấp độ:</span>
+                    <strong>Trung cấp</strong>
+                </div>
+
+                <div>
+                    <span>Ngôn ngữ:</span>
+                    <strong>Tiếng Anh</strong>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <section class="ui-card lesson-list-card">
+        <h2>Danh sách bài học</h2>
+
+        <div class="lesson-list">
+            @for (var i = 1; i <= 5; i++)
+            {
+                <article class="lesson-list-item">
+                    <div class="lesson-list-icon">▧</div>
+
+                    <div class="lesson-list-info">
+                        <strong>Bài @i: Từ vựng và chủ đề du lịch</strong>
+                        <span>Cấp độ: trung cấp</span>
+                    </div>
+
+                    <a asp-controller="User"
+                       asp-action="StudyPage"
+                       class="ui-primary-button lesson-enter-button">
+                        Vào học
+                    </a>
+                </article>
+            }
+        </div>
+    </section>
+</section>

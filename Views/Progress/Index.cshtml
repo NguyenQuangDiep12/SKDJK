@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Tiến độ học tập";
+}
+
+<section class="user-page progress-page">
+    <div class="page-toolbar">
+        <h1>Tiến độ học tập</h1>
+
+        <div class="progress-filters">
+            <select>
+                <option>Tất cả thời gian</option>
+                <option>7 ngày</option>
+                <option>30 ngày</option>
+            </select>
+
+            <div class="search-field">
+                <span>⌕</span>
+                <input type="text" placeholder="Tìm kiếm bài học, chủ đề..." />
+            </div>
+        </div>
+    </div>
+
+    <section class="ui-card progress-overview">
+        <h2>1. Tổng quan tiến độ</h2>
+
+        <div class="progress-overview-grid">
+
+            <div class="progress-stat-stack">
+
+                <article class="progress-stat blue-stat">
+                    <div class="stat-icon">▣</div>
+                    <div>
+                        <strong>24</strong>
+                        <span>Bài học hoàn thành</span>
+                        <small>/ 60 bài</small>
+                    </div>
+                </article>
+
+                <article class="progress-stat orange-stat">
+                    <div class="stat-icon">▣</div>
+                    <div>
+                        <strong>8</strong>
+                        <span>Bài kiểm tra đã làm</span>
+                        <small>/ 15 bài</small>
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="overall-progress-circle">
+                <strong>40%</strong>
+            </div>
+
+            <div class="topic-progress-list">
+                @foreach (var item in new[] {
+                                ("Từ vựng", 60),
+                                ("Ngữ pháp", 45),
+                                ("Nghe", 35),
+                                ("Nói", 30)
+                                })
+                {
+                    <div class="topic-progress-row">
+                        <div>
+                            <span>@item.Item1</span>
+                            <strong>@item.Item2%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div style="width:@(item.Item2)%"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </section>
+
+    <section class="ui-card progress-table-section">
+        <div class="section-bar">
+            <h2>2. Danh sách bài đã hoàn thành</h2>
+            <a href="#">Xem chi tiết →</a>
+        </div>
+
+        <div class="responsive-table">
+            <table class="ui-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tiêu đề bài học</th>
+                        <th>Chủ đề</th>
+                        <th>Ngày hoàn thành</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Giới thiệu bản thân</td>
+                        <td>Từ vựng</td>
+                        <td>20/05/2024</td>
+                        <td><span class="status-success">● Hoàn thành</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Thì hiện tại đơn</td>
+                        <td>Ngữ pháp</td>
+                        <td>18/05/2024</td>
+                        <td><span class="status-success">● Hoàn thành</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nghe hội thoại cơ bản</td>
+                        <td>Nghe</td>
+                        <td>16/05/2024</td>
+                        <td><span class="status-success">● Hoàn thành</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="ui-card progress-table-section">
+        <div class="section-bar">
+            <h2>3. Lịch sử làm bài kiểm tra</h2>
+            <a href="#">Xem chi tiết →</a>
+        </div>
+
+        <div class="responsive-table">
+            <table class="ui-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên bài kiểm tra</th>
+                        <th>Chủ đề</th>
+                        <th>Ngày làm</th>
+                        <th>Điểm số</th>
+                        <th>Kết quả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Kiểm tra Từ vựng - Tuần 3</td>
+                        <td>Từ vựng</td>
+                        <td>20/05/2024</td>
+                        <td>85/100</td>
+                        <td><span class="status-success">● Đạt</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Kiểm tra Ngữ pháp - Tuần 4</td>
+                        <td>Ngữ pháp</td>
+                        <td>18/05/2024</td>
+                        <td>70/100</td>
+                        <td><span class="status-success">● Đạt</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Kiểm tra Nghe hiểu - Tuần 3</td>
+                        <td>Nghe</td>
+                        <td>16/05/2024</td>
+                        <td>60/100</td>
+                        <td><span class="status-warning">● Cần cải thiện</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>

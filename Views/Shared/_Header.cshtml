@@ -1,0 +1,46 @@
+﻿<header class="header">
+
+    <div class="header-brand">
+
+        <button class="menu-button"
+                id="menuButton"
+                type="button">
+            ☰
+        </button>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="brand-link">
+
+            <div class="brand-logo">
+                A
+            </div>
+
+            <span>
+                Hệ thống học ngoại ngữ trực tuyến
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <div class="header-search">
+
+        <input type="text"
+               placeholder="Tìm kiếm chủ đề, bài học..." />
+
+        <span>
+            ⌕
+        </span>
+
+    </div>
+
+
+    <div class="header-user">
+
+        <partial name="_UserInfo" />
+
+    </div>
+
+</header>

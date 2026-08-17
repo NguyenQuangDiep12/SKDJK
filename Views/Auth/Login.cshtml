@@ -1,0 +1,112 @@
+﻿@model SKDJK.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    ViewData["HideNavigation"] = true;
+}
+
+<div class="auth-container">
+
+    <div class="auth-brand">
+
+        <div class="auth-logo">
+            A
+        </div>
+
+        <h1>
+            Hệ thống học ngoại ngữ trực tuyến
+        </h1>
+
+    </div>
+
+
+    <section class="auth-card">
+
+        <h2>Đăng nhập</h2>
+
+        <p>
+            Đăng nhập để tiếp tục sử dụng hệ thống.
+        </p>
+
+
+        <form asp-controller="Auth"
+              asp-action="Login"
+              method="post"
+              class="auth-form">
+
+
+            <div asp-validation-summary="ModelOnly"
+                 class="message-box">
+            </div>
+
+
+            <div class="form-group">
+
+                <label asp-for="Email"></label>
+
+                <input asp-for="Email"
+                       placeholder="Nhập email của bạn" />
+
+                <span asp-validation-for="Email"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label asp-for="Password"></label>
+
+                <div class="password-box">
+
+                    <input asp-for="Password"
+                           id="loginPassword"
+                           placeholder="Nhập mật khẩu" />
+
+                    <button type="button"
+                            class="password-toggle"
+                            data-password-target="loginPassword">
+                        👁
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="Password"
+                      class="validation-error">
+                </span>
+
+            </div>
+
+
+            <div class="form-row">
+                <label class="checkbox-label">
+                    <input asp-for="RememberMe" />
+                    <span>
+                        Ghi nho dang nhap
+                    </span>
+                </label>
+            </div>
+
+
+            <button class="primary-button"
+                    type="submit">
+                Đăng nhập
+            </button>
+
+        </form>
+
+    </section>
+
+    <p class="auth-switch">
+
+        Chưa có tài khoản?
+
+        <a asp-controller="Auth"
+           asp-action="Register">
+            Đăng ký
+        </a>
+
+    </p>
+
+</div>

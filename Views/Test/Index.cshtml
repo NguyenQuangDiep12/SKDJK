@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Danh sách bài kiểm tra";
+}
+
+<section class="user-page tests-page">
+    <header class="center-page-heading">
+        <h1>Danh sách bài kiểm tra</h1>
+        <p>Danh sách các bài kiểm tra theo cấp độ. Chọn để bắt đầu làm.</p>
+    </header>
+
+    <div class="test-filter-card">
+        <div class="search-field large">
+            <input type="text" placeholder="Tìm tên bài kiểm tra..." />
+            <span>⌕</span>
+        </div>
+
+        <select>
+            <option>Tất cả cấp độ</option>
+            <option>Cấp độ 1</option>
+            <option>Cấp độ 2</option>
+        </select>
+    </div>
+
+    <div class="table-card">
+        <div class="responsive-table">
+            <table class="ui-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Cấp độ</th>
+                        <th>Số câu</th>
+                        <th>Thời gian</th>
+                        <th>Tên bài kiểm tra</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (var i = 1; i <= 6; i++)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>Cấp độ @(i <= 4 ? 1 : 2)</td>
+                            <td>@(10 + i * 5) câu</td>
+                            <td>@(15 + i * 5) phút</td>
+                            <td>@(i % 2 == 0 ? "Từ vựng cơ bản" : "Ngữ pháp cơ bản")</td>
+                            <td>
+                                <a asp-controller="User"
+                                   asp-action="TestTake"
+                                   class="table-action-link">
+                                    Làm bài
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav class="compact-pagination">
+        <button type="button">‹</button>
+        <button type="button" class="active">1</button>
+        <button type="button">2</button>
+        <button type="button">3</button>
+        <span>...</span>
+        <button type="button">10</button>
+        <button type="button">›</button>
+    </nav>
+</section>
