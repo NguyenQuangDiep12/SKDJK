@@ -15,7 +15,6 @@ namespace SKDJK.Controllers
             _contextAccessor = contextAccessor;
         }
         [HttpGet]
-
         public async Task<IActionResult> Index(CancellationToken ct)
         {
             var userId = _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -27,49 +26,31 @@ namespace SKDJK.Controllers
                 return View("Error");
             }
 
-            var dto = result.Value;
-
             var viewModel = new HomeViewModel
             {
-                LearnedTopicCount = dto.LearnedTopicCount,
-
-                CompletedTestCount = dto.CompletedTestCount,
-
-                OverallProgress = dto.OverallProgress,
-
-                ContinueLearning = dto.ContinueLearning == null
-            ? null
-            : new ContinueLessonViewModel
-            {
-                LessonId =
-                    dto.ContinueLearning.LessonId,
-
-                TopicId =
-                    dto.ContinueLearning.TopicId,
-
-                TopicName =
-                    dto.ContinueLearning.TopicName,
-
-                LessonTitle =
-                    dto.ContinueLearning.LessonTitle,
-
-                CompletionPercent =
-                    dto.ContinueLearning.CompletionPercent
-            },
-
-                SuggestedTopics = dto.SuggestedTopics
-                .Select(x => new SuggestedTopicViewModel
+                IsAuthenticated = User.Identity?.IsAuthenticated == true,
+                FullName = User.Identity?.Name,
+                CompletedTestCount = result.Value.CompletedTestCount,
+                ContinueLesson = result.Value.ContinueLearning == null ? null : new ContinueLessonViewModel
+                {
+                    LessonId = result.Value.ContinueLearning.LessonId,
+                    CompletionPercent = result.Value.ContinueLearning.CompletionPercent,
+                    LessonTitle = result.Value.ContinueLearning.LessonTitle,
+                    TopicName = result.Value.ContinueLearning.TopicName,
+                },
+                LearnedTopicCount = result.Value.LearnedTopicCount,
+                OverallProgress = result.Value.OverallProgress,
+                SuggestedTopics = result.Value.SuggestedTopics.Select(x => new SuggestedTopicViewModel
                 {
                     TopicId = x.TopicId,
                     Name = x.Name,
-                    Level = x.Level,
                     Description = x.Description,
-                    ImageUrl = x.ImageUrl
-                })
-            .ToList()
+                    ImageUrl = x.ImageUrl,
+                    Level = x.Level,
+                }).ToList()
             };
 
-            return View();
+            return View(viewModel);
         }
 
 

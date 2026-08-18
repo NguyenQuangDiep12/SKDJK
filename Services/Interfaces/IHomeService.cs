@@ -1,4 +1,4 @@
-﻿using SKDJK.Dtos.Home;
+﻿using SKDJK.Dtos;
 using SKDJK.Models.commons;
 using SKDJK.ViewModels;
 

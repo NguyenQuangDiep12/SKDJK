@@ -1,7 +1,9 @@
-﻿namespace SKDJK.Services.Interfaces
+﻿using SKDJK.Models.commons;
+
+namespace SKDJK.Services.Interfaces
 {
     public interface IUploadImage
     {
-        public Task<bool> UploadFileImage(IFormFile ImageFile);
+        public Task<Result<string>> UploadFileImage(IFormFile imagefile, string imagefolder, CancellationToken ct = default);
     }
 }

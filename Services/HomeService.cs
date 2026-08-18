@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SKDJK.Data;
-using SKDJK.Dtos.Home;
+using SKDJK.Dtos;
 using SKDJK.Models;
 using SKDJK.Models.commons;
 using SKDJK.Services.Interfaces;
@@ -29,7 +29,7 @@ public class HomeService : IHomeService
 
         if(userExists == null)
         {
-            return Result<HomeDto>.Failure(new Error("Auth.EmailNotExist", "Tai khoan nguoi dung khong ton tai!");
+            return Result<HomeDto>.Failure(new Error("Auth.EmailNotExist", "Tai khoan nguoi dung khong ton tai!"));
         }
 
         // query nhung bai hoc user da bat dau

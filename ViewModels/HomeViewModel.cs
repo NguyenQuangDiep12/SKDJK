@@ -14,7 +14,7 @@
 
         public ContinueLessonViewModel? ContinueLesson { get; set; }
 
-        public List<TopicCardViewModel> SuggestedTopics { get; set; } = new();
+        public List<SuggestedTopicViewModel> SuggestedTopics { get; set; } = new();
     }
 
     public class ContinueLessonViewModel

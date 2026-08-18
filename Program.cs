@@ -60,8 +60,12 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthorization();
 #endregion
 
+
 #region DI
+builder.Services.Configure<CloudinaryOption>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddHttpContextAccessor();
 #endregion
 
@@ -69,8 +73,6 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-
     app.UseHsts();
 }
 

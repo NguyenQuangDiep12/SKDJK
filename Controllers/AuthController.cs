@@ -116,20 +116,13 @@ namespace SKDJK.Controllers
 
             var principal = new ClaimsPrincipal(identity);
 
-            var authenticationProperties =
-                new AuthenticationProperties
-                {
-                    IsPersistent = model.RememberMe
-                };
+            var authenticationProperties = new AuthenticationProperties {
+                IsPersistent = model.RememberMe
+            };
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                authenticationProperties);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
 
-            return RedirectToAction(
-                "Index",
-                "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
