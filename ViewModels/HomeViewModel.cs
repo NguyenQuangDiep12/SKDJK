@@ -27,4 +27,16 @@
 
         public decimal CompletionPercent { get; set; }
     }
+    public class SuggestedTopicViewModel
+    {
+        public int TopicId { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string Level { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+
+        public string? ImageUrl { get; set; }
+    }
 }
