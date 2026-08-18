@@ -62,6 +62,7 @@ builder.Services.AddAuthorization();
 
 #region DI
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpContextAccessor();
 #endregion
 
 var app = builder.Build();
