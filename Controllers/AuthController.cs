@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SKDJK.Models.commons;
 using SKDJK.Services.Interfaces;
+using SKDJK.ViewModels;
 using System.Security.Claims;
 
 namespace SKDJK.Controllers
@@ -25,42 +26,18 @@ namespace SKDJK.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(
-            string fullName,
-            string email,
-            string password)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            // Không còn ViewModel nên validate thủ công
-            if (string.IsNullOrWhiteSpace(fullName))
-            {
-                ModelState.AddModelError(
-                    "FullName",
-                    "Vui lòng nhập họ tên");
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                ModelState.AddModelError(
-                    "Email",
-                    "Vui lòng nhập email");
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                ModelState.AddModelError(
-                    "Password",
-                    "Vui lòng nhập mật khẩu");
-            }
-
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(model);
             }
 
+
             var result = await _authService.RegisterAsync(
-                fullName,
-                email,
-                password);
+                model.FullName,
+                model.Email,
+                model.Password);
 
             if (!result.IsSuccess)
             {
@@ -91,34 +68,17 @@ namespace SKDJK.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(
-            string email,
-            string password,
-            bool rememberMe)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            // Validate thủ công
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                ModelState.AddModelError(
-                    "Email",
-                    "Vui lòng nhập email");
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                ModelState.AddModelError(
-                    "Password",
-                    "Vui lòng nhập mật khẩu");
-            }
 
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(model);
             }
 
             var result = await _authService.LoginAsync(
-                email,
-                password);
+                model.Email,
+                model.Password);
 
             if (!result.IsSuccess)
             {
@@ -159,7 +119,7 @@ namespace SKDJK.Controllers
             var authenticationProperties =
                 new AuthenticationProperties
                 {
-                    IsPersistent = rememberMe
+                    IsPersistent = model.RememberMe
                 };
 
             await HttpContext.SignInAsync(
