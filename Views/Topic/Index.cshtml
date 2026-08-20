@@ -1,63 +1,56 @@
-﻿@{
+@model TopicListViewModel
+@{
     ViewData["Title"] = "Danh sách chủ đề";
 }
-
-<section class="user-page topic-page">
-    <div class="page-toolbar">
+<section class="page">
+    <header class="page-toolbar">
         <h1>Danh sách chủ đề</h1>
-
-        <div class="topic-filters">
-            <div class="search-field">
-                <span>⌕</span>
-                <input type="text" placeholder="Tìm kiếm chủ đề..." />
-            </div>
-
-            <select>
-                <option>Chọn ngôn ngữ</option>
-                <option>Tiếng Anh</option>
-                <option>Tiếng Nhật</option>
+        <form method="get" asp-action="Index" class="filters">
+            <input name="search" value="@Model.Search" placeholder="Tìm kiếm chủ đề..." />
+            <select name="languageId">
+                <option value="">Tất cả ngôn ngữ</option>
+                @foreach (var language in Model.Languages)
+                {
+                    <option value="@language.Id" selected="@(Model.LanguageId == language.Id)">@language.Name</option>
+                }
             </select>
-
-            <select>
-                <option>Chọn cấp độ</option>
-                <option>Cơ bản</option>
-                <option>Trung cấp</option>
-                <option>Nâng cao</option>
+            <select name="level">
+                <option value="">Tất cả cấp độ</option>
+                @foreach (var level in Model.Levels)
+                {
+                    <option value="@level" selected="@(Model.Level == level)">@level</option>
+                }
             </select>
+            <button class="button" type="submit">Lọc</button>
+        </form>
+    </header>
+
+    @if (Model.Topics.Count == 0)
+    {
+        <div class="card muted">Không tìm thấy chủ đề phù hợp.</div>
+    }
+    else
+    {
+        <div class="card grid grid-4">
+            @foreach (var topic in Model.Topics)
+            {
+                <article class="topic-card">
+                    <img class="topic-image" src="@(string.IsNullOrWhiteSpace(topic.ImageUrl) ? "/images/topic-travel.svg" : topic.ImageUrl)" alt="Minh họa @topic.Name" />
+                    <h3>@topic.Name</h3>
+                    <p>@topic.LanguageName · @topic.Level</p>
+                    <a asp-action="Details" asp-route-id="@topic.Id" class="button">Xem chi tiết</a>
+                </article>
+            }
         </div>
-    </div>
+    }
 
-    <div class="topic-card-grid">
-        @for (var i = 1; i <= 12; i++)
-        {
-            <article class="topic-ui-card">
-                <div class="topic-ui-image">▧</div>
-
-                <h3>Ẩm thực</h3>
-
-                <p>
-                    Cấp độ @(i % 3 == 0 ? "cơ bản" : "trung cấp")
-                </p>
-
-                <a asp-controller="User"
-                   asp-action="TopicDetails"
-                   class="ui-primary-button">
-                    Xem chi tiết
-                </a>
-            </article>
-        }
-    </div>
-
-    <nav class="ui-pagination" aria-label="Phân trang">
-        <button type="button">‹ <span>Trước</span></button>
-
-        <div class="ui-pagination-pages">
-            <button type="button" class="active">1</button>
-            <button type="button">2</button>
-            <button type="button">3</button>
-            <button type="button">4</button>
-        </div>
-
-        <button type="button"><span>Sau</span> ›</button>
-    </nav>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pagination" aria-label="Phân trang chủ đề">
+            @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+            {
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-languageId="@Model.LanguageId" asp-route-level="@Model.Level" asp-route-page="@pageNumber" asp-route-pageSize="@Model.PageSize" class="@(pageNumber == Model.Page ? "active" : "")">@pageNumber</a>
+            }
+        </nav>
+    }
 </section>

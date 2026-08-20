@@ -10,7 +10,7 @@ namespace SKDJK.Models
         public Topic Topic { get; set; } = null!;
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
         public ICollection<Vocabulary> Vocabularies { get; set; } = new List<Vocabulary>();
         public ICollection<Test> Tests { get; set; } = new List<Test>();
         public ICollection<LearningProgress> LearningProgresses { get; set; } = new List<LearningProgress>();

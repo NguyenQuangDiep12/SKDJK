@@ -20,9 +20,9 @@ builder.Services
     .AddCookie(options =>
     {
         // Trang đăng nhập khi user chưa xác thực
-        options.LoginPath = "/Account/Login";
+        options.LoginPath = "/Auth/Login";
         // Trang báo không có quyền
-        options.AccessDeniedPath = "/Account/Forbidden";
+        options.AccessDeniedPath = "/Auth/Forbidden";
         // ?returnUrl=/Lesson/MyLesson
         options.ReturnUrlParameter = "returnUrl";
         // Thời gian Authentication Ticket tồn tại
@@ -36,7 +36,9 @@ builder.Services
         // JavaScript không đọc được
         options.Cookie.HttpOnly = true;
         // Chỉ gửi cookie qua HTTPS
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
         // Phù hợp với MVC authentication thông thường
         options.Cookie.SameSite = SameSiteMode.Lax;
         // Cookie có hiệu lực toàn website
@@ -52,7 +54,9 @@ builder.Services.AddSession(options =>
     // Session het han neu khong duoc su dung trong 20 phut
     options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.IsEssential = true;
 });
@@ -66,6 +70,17 @@ builder.Services.Configure<CloudinaryOption>(builder.Configuration.GetSection("C
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<ITopicService, TopicService>();
+builder.Services.AddScoped<ITestService, TestService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<IUploadImage, CloudinaryImageUploadFileProvider>();
+builder.Services.AddHttpClient<IFreeDictionaryService, FreeDictionaryService>(client =>
+{
+    // Free Dictionary là nguồn audio mẫu duy nhất cho tab luyện nói.
+    client.BaseAddress = new Uri("https://api.dictionaryapi.dev/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 builder.Services.AddHttpContextAccessor();
 #endregion
 

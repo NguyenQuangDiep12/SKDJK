@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" role="img" aria-label="Minh họa chủ đề du lịch">
+  <rect width="600" height="320" fill="#eef2ff"/>
+  <circle cx="470" cy="75" r="38" fill="#fbbf24"/>
+  <path d="M0 250L150 110l100 96 95-76 255 190H0z" fill="#a7f3d0"/>
+  <path d="M0 278l180-94 85 63 95-52 240 125H0z" fill="#5eead4"/>
+  <text x="30" y="55" font-family="Arial" font-size="28" fill="#3730a3">Giao tiếp và du lịch</text>
+</svg>

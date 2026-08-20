@@ -1,12 +1,10 @@
-﻿using SKDJK.Models.commons;
-using SKDJK.ViewModels;
+using SKDJK.Dtos;
+using SKDJK.Models.commons;
 
 namespace SKDJK.Services.Interfaces
 {
     public interface IProgressService
     {
-        Task<Result<ProgressViewModel>> GetAsync(
-            int userId,
-            CancellationToken cancellationToken = default);
+        Task<Result<ProgressDto>> GetAsync(int userId, CancellationToken cancellationToken = default);
     }
 }

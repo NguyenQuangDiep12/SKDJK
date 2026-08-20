@@ -1,62 +1,162 @@
-﻿@{
-    ViewData["Title"] = "Bài học";
+@model LessonStudyViewModel
+@{
+    ViewData["Title"] = Model.LessonTitle;
+    var progressWidth = $"{Math.Clamp(Model.CompletionPercent, 0, 100):0}%";
 }
+<section class="page" id="study-page" data-lesson-id="@Model.LessonId">
+    <header class="page-heading">
+        <div><h1>@Model.LessonTitle</h1><p>@Model.TopicName · @Model.Description</p></div>
+        <span class="badge">Tiến độ @Model.CompletionPercent.ToString("0")%</span>
+    </header>
+    <div class="progress-track" style="margin-bottom:14px"><span style="width:@progressWidth"></span></div>
 
-<section class="user-page study-page">
-    <div class="lesson-tabs"
-         role="tablist"
-         aria-label="Nội dung bài học">
+    <nav class="lesson-tabs" aria-label="Nội dung bài học">
+        <button type="button" class="lesson-tab active" data-lesson-tab="vocabulary">Từ vựng</button>
+        <button type="button" class="lesson-tab" data-lesson-tab="grammar">Ngữ pháp</button>
+        <button type="button" class="lesson-tab" data-lesson-tab="listening">Luyện nghe</button>
+        <button type="button" class="lesson-tab" data-lesson-tab="speaking">Luyện nói</button>
+    </nav>
 
-        <button type="button"
-                class="lesson-tab active"
-                data-lesson-tab="vocabulary">
-            Từ vựng
-        </button>
-
-        <button type="button"
-                class="lesson-tab"
-                data-lesson-tab="grammar">
-            Ngữ pháp
-        </button>
-
-        <button type="button"
-                class="lesson-tab"
-                data-lesson-tab="listening">
-            Luyện nghe
-        </button>
-
-        <button type="button"
-                class="lesson-tab"
-                data-lesson-tab="speaking">
-            Luyện nói
-        </button>
+    <div id="lesson-tab-content">
+        <div class="lesson-panel active" data-lesson-panel="vocabulary"><partial name="Components/_Vocabulary" model="Model.Vocabulary" /></div>
+        <div class="lesson-panel" data-lesson-panel="grammar"><partial name="Components/_Grammar" model="Model.Grammar" /></div>
+        <div class="lesson-panel" data-lesson-panel="listening"><partial name="Components/_Listening" model="Model.Listening" /></div>
+        <div class="lesson-panel" data-lesson-panel="speaking"><partial name="Components/_Speaking" model="Model.Vocabulary" /></div>
     </div>
 
-    <div class="lesson-tab-content">
-
-        <div class="lesson-panel active"
-             data-lesson-panel="vocabulary">
-            <partial name="Components/_Vocabulary" model="Model"/>
-        </div>
-
-        <div class="lesson-panel"
-             data-lesson-panel="grammar">
-            <partial name="Components/_Grammar" />
-        </div>
-
-        <div class="lesson-panel"
-             data-lesson-panel="listening">
-            <partial name="Components/_Listening" />
-        </div>
-
-        <div class="lesson-panel"
-             data-lesson-panel="speaking">
-            <partial name="Components/_Speaking" />
-        </div>
-
+    <div class="vocab-actions">
+        @if (Model.PreviousLessonId.HasValue)
+        {
+            <a asp-action="Index" asp-route-id="@Model.PreviousLessonId" class="button secondary">← Bài trước</a>
+        }
+        else
+        {
+            <span></span>
+        }
+        <form asp-action="Complete" asp-route-id="@Model.LessonId" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="button">✓ Đánh dấu hoàn thành</button>
+        </form>
+        @if (Model.NextLessonId.HasValue)
+        {
+            <a asp-action="Index" asp-route-id="@Model.NextLessonId" class="button secondary">Bài sau →</a>
+        }
     </div>
 </section>
-
 @section Scripts {
-    <script src="~/js/lesson-tabs.js" asp-append-version="true"></script>
+<script>
+    // Khởi tạo tab bài học và audio Free Dictionary trực tiếp trong Razor View.
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy toàn bộ nút tab.
+        const tabs = Array.from(document.querySelectorAll("[data-lesson-tab]"));
+
+        // Lấy toàn bộ panel nội dung.
+        const panels = Array.from(document.querySelectorAll("[data-lesson-panel]"));
+
+        // Mỗi click chỉ bật panel có data key tương ứng.
+        tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                const target = tab.dataset.lessonTab;
+                tabs.forEach(function (item) { item.classList.toggle("active", item === tab); });
+                panels.forEach(function (panel) { panel.classList.toggle("active", panel.dataset.lessonPanel === target); });
+            });
+        });
+
+        // Gọi endpoint nội bộ lấy audio mẫu; không dùng browser TTS.
+        async function playPronunciation(word, statusElement, phoneticElement) {
+            // Báo trạng thái trong lúc chờ API.
+            statusElement.textContent = "Đang tải audio phát âm...";
+
+            try {
+                // Encode từ trước khi đưa vào query string.
+                const response = await fetch(`/dictionary/pronunciation?word=${encodeURIComponent(word)}`);
+
+                // Đọc JSON do endpoint nội bộ trả về.
+                const data = await response.json();
+
+                // Hiển thị message fallback nếu API không có audio.
+                if (!response.ok || !data.audioUrl) {
+                    statusElement.textContent = data.message || "Chưa có audio phát âm cho từ này.";
+                    return;
+                }
+
+                // Cập nhật phiên âm khi API có dữ liệu tốt hơn.
+                if (phoneticElement && data.phonetic) phoneticElement.textContent = data.phonetic;
+
+                // Tạo thông báo và thẻ audio controls ngay trong card.
+                const message = document.createElement("span");
+                const audio = document.createElement("audio");
+                audio.controls = true;
+                audio.preload = "none";
+                audio.src = data.audioUrl;
+                audio.style.width = "100%";
+                message.textContent = "Audio từ Free Dictionary. ";
+                statusElement.replaceChildren(message, audio);
+
+                try {
+                    // Thử phát ngay sau click.
+                    await audio.play();
+                    message.textContent = "Đang phát audio từ Free Dictionary. ";
+                } catch (playbackError) {
+                    // Autoplay bị chặn thì người học vẫn dùng được controls.
+                    message.textContent = "Nhấn nút phát trên thanh audio để nghe. ";
+                }
+            } catch (error) {
+                // Lỗi mạng không làm hỏng các tab học còn lại.
+                statusElement.textContent = "Không thể tải audio phát âm lúc này.";
+            }
+        }
+
+        // Đọc JSON từ vựng an toàn do Razor serialize.
+        const dataElement = document.getElementById("vocabulary-data");
+        if (dataElement) {
+            const items = JSON.parse(dataElement.textContent || "[]");
+            let currentIndex = 0;
+            const word = document.getElementById("vocabulary-word");
+            const pronunciation = document.getElementById("vocabulary-pronunciation");
+            const meaning = document.getElementById("vocabulary-meaning");
+            const example = document.getElementById("vocabulary-example");
+            const position = document.getElementById("vocabulary-position");
+            const previous = document.getElementById("previous-vocabulary");
+            const next = document.getElementById("next-vocabulary");
+            const play = document.getElementById("play-word-audio");
+            const status = document.getElementById("vocabulary-audio-status");
+
+            // Render một thẻ từ theo currentIndex.
+            function render() {
+                const item = items[currentIndex];
+                word.textContent = item.word;
+                pronunciation.textContent = item.pronunciation || "";
+                meaning.textContent = item.meaning || "Chưa có nghĩa";
+                example.textContent = item.example || "Chưa có ví dụ.";
+                position.textContent = `${currentIndex + 1} / ${items.length}`;
+                previous.disabled = currentIndex === 0;
+                next.disabled = currentIndex === items.length - 1;
+                status.textContent = "";
+            }
+
+            // Chuyển về từ trước nếu còn phần tử.
+            previous.addEventListener("click", function () { if (currentIndex > 0) { currentIndex--; render(); } });
+
+            // Chuyển sang từ tiếp nếu còn phần tử.
+            next.addEventListener("click", function () { if (currentIndex < items.length - 1) { currentIndex++; render(); } });
+
+            // Nút loa gọi Free Dictionary cho từ đang hiển thị.
+            play.addEventListener("click", function () { playPronunciation(items[currentIndex].word, status, pronunciation); });
+
+            // Render từ đầu tiên.
+            render();
+        }
+
+        // Các nút Speaking dùng chung hàm audio mẫu và không ghi âm.
+        document.querySelectorAll(".pronounce-button").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const card = button.closest(".card");
+                const status = card.querySelector(".audio-status");
+                const phonetic = card.querySelector(".pronunciation-text");
+                playPronunciation(button.dataset.word, status, phonetic);
+            });
+        });
+    });
+</script>
 }

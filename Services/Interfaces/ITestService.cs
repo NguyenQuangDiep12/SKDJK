@@ -1,67 +1,24 @@
-﻿using SKDJK.Models;
+using SKDJK.Dtos;
 using SKDJK.Models.commons;
-using SKDJK.ViewModels;
+using SKDJK.Models.enums;
 
 namespace SKDJK.Services.Interfaces
 {
+    // Service Test chỉ nhận và trả DTO; Controller chịu trách nhiệm ánh xạ ViewModel.
     public interface ITestService
     {
-        // All
-        Task<Result<TestListViewModel>> GetTestsAsync(
-            int userId,
-            string? search,
-            string? level,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<TakeTestViewModel>> GetTakeAsync(
-            int testId,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<int>> SubmitAsync(
-            int userId,
-            SubmitTestViewModel model,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<TestResultViewModel>> GetResultAsync(
-            int userId,
-            int resultId,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<TestHistoryViewModel>> GetHistoryAsync(
-            int userId,
-            CancellationToken cancellationToken = default);
-
-        // Admin
-        Task<Result<List<Test>>> GetAllAsync(
-            CancellationToken cancellationToken = default);
-
-        Task<Result<AdminTestFormViewModel>> GetTestFormAsync(
-            int? id,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<int>> SaveTestAsync(
-            AdminTestFormViewModel model,
-            CancellationToken cancellationToken = default);
-
-        Task<Result> DeleteTestAsync(
-            int id,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<List<Question>>> GetQuestionsAsync(
-            int testId,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<AdminQuestionFormViewModel>> GetQuestionFormAsync(
-            int testId,
-            int? id,
-            CancellationToken cancellationToken = default);
-
-        Task<Result> SaveQuestionAsync(
-            AdminQuestionFormViewModel model,
-            CancellationToken cancellationToken = default);
-
-        Task<Result> DeleteQuestionAsync(
-            int id,
-            CancellationToken cancellationToken = default);
+        Task<Result<TestListDto>> GetTestsAsync(int userId, string? search, TestFormat? format, TestMode? mode, string? level, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default);
+        Task<Result<TakeTestDto>> GetTakeAsync(int testId, CancellationToken cancellationToken = default);
+        Task<Result<int>> SubmitAsync(int userId, SubmitTestDto request, CancellationToken cancellationToken = default);
+        Task<Result<TestResultDto>> GetResultAsync(int userId, int resultId, CancellationToken cancellationToken = default);
+        Task<Result<TestHistoryDto>> GetHistoryAsync(int userId, CancellationToken cancellationToken = default);
+        Task<Result<AdminTestListDto>> GetAdminAsync(string? search, TestFormat? format, TestMode? mode, CancellationToken cancellationToken = default);
+        Task<Result<AdminTestFormDto>> GetTestFormAsync(int? id, CancellationToken cancellationToken = default);
+        Task<Result<int>> SaveTestAsync(AdminTestFormDto request, CancellationToken cancellationToken = default);
+        Task<Result> DeleteTestAsync(int id, CancellationToken cancellationToken = default);
+        Task<Result<AdminQuestionListDto>> GetQuestionsAsync(int testId, CancellationToken cancellationToken = default);
+        Task<Result<AdminQuestionFormDto>> GetQuestionFormAsync(int testId, int? id, CancellationToken cancellationToken = default);
+        Task<Result> SaveQuestionAsync(AdminQuestionFormDto request, CancellationToken cancellationToken = default);
+        Task<Result> DeleteQuestionAsync(int id, CancellationToken cancellationToken = default);
     }
 }

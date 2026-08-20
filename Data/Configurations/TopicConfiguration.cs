@@ -19,7 +19,7 @@ namespace SKDJK.Data.Configurations
                 .HasMaxLength(100);
             builder.Property(t => t.Level)
                 .IsRequired()
-                .HasColumnType("varchar")
+                .HasColumnType("nvarchar")
                 .HasMaxLength(50);
             builder.Property(t => t.Description)
             .IsRequired(false)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SKDJK.Dtos;
 using SKDJK.Models.commons;
 using SKDJK.Services.Interfaces;
 using SKDJK.ViewModels;
@@ -34,10 +35,16 @@ namespace SKDJK.Controllers
             }
 
 
-            var result = await _authService.RegisterAsync(
-                model.FullName,
-                model.Email,
-                model.Password);
+            // Controller đổi ViewModel của form thành DTO trước khi gọi Service.
+            var request = new RegisterRequestDto
+            {
+                FullName = model.FullName,
+                Email = model.Email,
+                Password = model.Password
+            };
+
+            // Service chỉ nhận DTO nên không phụ thuộc vào giao diện Razor.
+            var result = await _authService.RegisterAsync(request);
 
             if (!result.IsSuccess)
             {
@@ -54,7 +61,7 @@ namespace SKDJK.Controllers
                         result.Error.Message);
                 }
 
-                return View();
+                return View(model);
             }
 
             return RedirectToAction(nameof(Login));
@@ -76,9 +83,15 @@ namespace SKDJK.Controllers
                 return View(model);
             }
 
-            var result = await _authService.LoginAsync(
-                model.Email,
-                model.Password);
+            // Controller đổi dữ liệu form đăng nhập thành DTO cho Service.
+            var request = new LoginRequestDto
+            {
+                Email = model.Email,
+                Password = model.Password
+            };
+
+            // Service xử lý DTO và trả về DTO người dùng đã xác thực.
+            var result = await _authService.LoginAsync(request);
 
             if (!result.IsSuccess)
             {
@@ -86,7 +99,7 @@ namespace SKDJK.Controllers
                     string.Empty,
                     result.Error.Message);
 
-                return View();
+                return View(model);
             }
 
             var user = result.Value!;

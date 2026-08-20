@@ -1,44 +1,65 @@
-﻿@{
+@{
+    // Ẩn navigation ở trang Auth theo dữ liệu View hiện có.
     var hideNavigation = ViewData["HideNavigation"] as bool? ?? false;
+    // Role quyết định dùng sidebar Admin hay sidebar người học.
+    var isAdmin = User.IsInRole("ADMIN");
 }
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Hệ thống học ngoại ngữ trực tuyến</title>
-
-    <link rel="stylesheet"
-          href="~/css/site.css"
-          asp-append-version="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - SKDJK</title>
+    <partial name="_InlineStyles" />
 </head>
 <body>
-
     @if (!hideNavigation)
     {
         <partial name="_Header" />
-
-        <div class="app-layout">
-            <partial name="_Sidebar" />
-
-            <main class="main-content page-animate">
+        <div class="app-shell">
+            @if (isAdmin)
+            {
+                <partial name="~/Views/Admin/Shared/_AdminSidebar.cshtml" />
+            }
+            else
+            {
+                <partial name="_Sidebar" />
+            }
+            <main class="main-content">
+                @if (TempData["SuccessMessage"] is string successMessage)
+                {
+                    <div class="alert">@successMessage</div>
+                }
+                @if (TempData["ErrorMessage"] is string errorMessage)
+                {
+                    <div class="alert error">@errorMessage</div>
+                }
                 @RenderBody()
             </main>
         </div>
     }
     else
     {
-        <main class="auth-page page-animate">
-            @RenderBody()
-        </main>
+        <main class="auth-page">@RenderBody()</main>
     }
-
     <partial name="_Footer" />
+    @* JavaScript dùng chung được viết trực tiếp trong cshtml theo yêu cầu, không tải từ wwwroot. *@
+    <script>
+        // Gắn hành vi hiện/ẩn mật khẩu cho mọi nút có data-password-target.
+        document.querySelectorAll("[data-password-target]").forEach(function (button) {
+            // Xử lý một nút độc lập để Login và Register dùng chung logic.
+            button.addEventListener("click", function () {
+                // Tìm input theo ID được khai báo trên data attribute.
+                const input = document.getElementById(button.dataset.passwordTarget);
 
-    <script src="~/js/site.js"
-            asp-append-version="true">
+                // Dừng nếu View không có input tương ứng.
+                if (!input) return;
+
+                // Chuyển password sang text hoặc ngược lại.
+                input.type = input.type === "password" ? "text" : "password";
+            });
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

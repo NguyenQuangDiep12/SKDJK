@@ -25,10 +25,35 @@ namespace SKDJK.Data.Configurations
                 .HasColumnType("varchar")
                 .HasConversion<string>()
                 .HasMaxLength(20);
+            builder.Property(q => q.SectionName)
+                .IsRequired()
+                .HasColumnType("varchar")
+                .HasMaxLength(20);
+            builder.Property(q => q.PartNumber)
+                .IsRequired();
+            builder.Property(q => q.Order)
+                .IsRequired();
+            builder.Property(q => q.ContextText)
+                .IsRequired(false)
+                .HasColumnType("nvarchar(max)");
+            builder.Property(q => q.GroupCode)
+                .IsRequired(false)
+                .HasColumnType("varchar")
+                .HasMaxLength(50);
             builder.Property(q => q.AudioUrl)
                 .IsRequired(false)
                 .HasColumnType("varchar")
                 .HasMaxLength(255);
+            builder.Property(q => q.Instruction)
+                .IsRequired(false)
+                .HasColumnType("nvarchar")
+                .HasMaxLength(500);
+            builder.Property(q => q.MaxWords)
+                .IsRequired(false);
+
+            // Mỗi câu trong một đề phải có Order duy nhất để hiển thị và chấm cùng thứ tự.
+            builder.HasIndex(q => new { q.TestId, q.Order })
+                .IsUnique();
 
             builder.HasOne(q => q.Test)
                 .WithMany(t => t.Questions)

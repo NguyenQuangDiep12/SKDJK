@@ -7,11 +7,11 @@ namespace SKDJK.Models
     {
         public int Id { get; set; }
         public int LessonId { get; set; }
-        public Lesson Lesson { get; set; }
-        public string Word { get; set; }
-        public string Meaning { get; set; }
-        public string Pronunciation { get; set; }
-        public string Example { get; set; }
+        public Lesson Lesson { get; set; } = null!;
+        public string Word { get; set; } = string.Empty;
+        public string? Meaning { get; set; }
+        public string? Pronunciation { get; set; }
+        public string? Example { get; set; }
         public string? AudioUrl { get; set; }
         public ICollection<PronunciationResult> PronunciationResults { get; set; } = new List<PronunciationResult>();
     }

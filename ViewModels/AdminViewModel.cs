@@ -1,4 +1,4 @@
-﻿using SKDJK.Models.enums;
+using SKDJK.Models.enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace SKDJK.ViewModels
@@ -140,6 +140,17 @@ namespace SKDJK.ViewModels
         [Display(Name = "Thời gian (phút)")]
         public int DurationMinutes { get; set; } = 30;
 
+        [Required]
+        [Display(Name = "Định dạng")]
+        public TestFormat Format { get; set; } = TestFormat.ToeicStyle;
+
+        [Required]
+        [Display(Name = "Chế độ")]
+        public TestMode Mode { get; set; } = TestMode.Practice;
+
+        [Display(Name = "Đang hoạt động")]
+        public bool IsActive { get; set; } = true;
+
         public List<AdminLessonOptionViewModel> Lessons { get; set; } = new();
     }
 
@@ -165,6 +176,26 @@ namespace SKDJK.ViewModels
         [Display(Name = "Loại câu hỏi")]
         public QuestionType QuestionType { get; set; }
 
+        [Required]
+        [RegularExpression("^(Listening|Reading)$", ErrorMessage = "Section chỉ nhận Listening hoặc Reading")]
+        [Display(Name = "Section")]
+        public string SectionName { get; set; } = "Reading";
+
+        [Range(1, 7)]
+        [Display(Name = "Part/Section")]
+        public int PartNumber { get; set; } = 1;
+
+        [Range(0, int.MaxValue)]
+        [Display(Name = "Thứ tự")]
+        public int Order { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Mã nhóm")]
+        public string? GroupCode { get; set; }
+
+        [Display(Name = "Đoạn văn/ngữ cảnh")]
+        public string? ContextText { get; set; }
+
         [StringLength(500)]
         [Display(Name = "URL hình ảnh")]
         public string? ImageUrl { get; set; }
@@ -173,14 +204,20 @@ namespace SKDJK.ViewModels
         [Display(Name = "URL âm thanh")]
         public string? AudioUrl { get; set; }
 
-        public List<AdminAnswerInputViewModel> Answers { get; set; } = new();
+        [StringLength(500)]
+        [Display(Name = "Hướng dẫn")]
+        public string? Instruction { get; set; }
 
-        [Display(Name = "Đáp án đúng")]
-        public int? CorrectAnswerIndex { get; set; }
+        [Range(1, 10, ErrorMessage = "Giới hạn từ phải từ 1 đến 10")]
+        [Display(Name = "Số từ tối đa")]
+        public int? MaxWords { get; set; }
+
+        public List<AdminAnswerInputViewModel> Answers { get; set; } = new();
     }
 
     public class AdminAnswerInputViewModel
     {
         public string? Content { get; set; }
+        public bool IsCorrect { get; set; }
     }
 }

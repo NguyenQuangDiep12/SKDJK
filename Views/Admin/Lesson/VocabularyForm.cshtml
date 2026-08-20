@@ -1,0 +1,12 @@
+@model AdminVocabularyFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa từ vựng" : "Thêm từ vựng";
+}
+<section class="page"><header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Audio phát âm phía người học được lấy từ Free Dictionary theo trường Từ.</p></div></header>
+    <form asp-action="SaveVocabulary" method="post" class="card form-grid">@Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><input asp-for="LessonId" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="Word"></label><input asp-for="Word" /><span asp-validation-for="Word"></span></div><div class="field"><label asp-for="Meaning"></label><input asp-for="Meaning" /></div>
+        <div class="field"><label asp-for="Pronunciation"></label><input asp-for="Pronunciation" /></div><div class="field"><label asp-for="AudioUrl"></label><input asp-for="AudioUrl" placeholder="Tùy chọn; không dùng cho Speaking" /></div>
+        <div class="field full"><label asp-for="Example"></label><textarea asp-for="Example" rows="4"></textarea></div>
+        <div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="LessonManagementDashboard" asp-route-lessonId="@Model.LessonId" class="button secondary">Hủy</a><button type="submit" class="button">Lưu từ vựng</button></div>
+    </form>
+</section>

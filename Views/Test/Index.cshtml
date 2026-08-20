@@ -1,70 +1,69 @@
-﻿@{
+@model TestListViewModel
+@{
     ViewData["Title"] = "Danh sách bài kiểm tra";
 }
-
-<section class="user-page tests-page">
-    <header class="center-page-heading">
-        <h1>Danh sách bài kiểm tra</h1>
-        <p>Danh sách các bài kiểm tra theo cấp độ. Chọn để bắt đầu làm.</p>
+<section class="page">
+    <header class="page-heading">
+        <div><h1>Danh sách bài kiểm tra</h1><p>Chọn bài luyện tập TOEIC-style hoặc IELTS-style để bắt đầu.</p></div>
+        <a asp-action="History" class="button secondary">Lịch sử kết quả</a>
     </header>
 
-    <div class="test-filter-card">
-        <div class="search-field large">
-            <input type="text" placeholder="Tìm tên bài kiểm tra..." />
-            <span>⌕</span>
-        </div>
-
-        <select>
-            <option>Tất cả cấp độ</option>
-            <option>Cấp độ 1</option>
-            <option>Cấp độ 2</option>
+    <form method="get" asp-action="Index" class="card filters" style="margin-bottom:16px">
+        <input name="search" value="@Model.Search" placeholder="Tìm tên bài kiểm tra..." />
+        <select name="format">
+            <option value="">Tất cả định dạng</option>
+            <option value="ToeicStyle" selected="@(Model.Format == TestFormat.ToeicStyle)">TOEIC-style</option>
+            <option value="IeltsStyle" selected="@(Model.Format == TestFormat.IeltsStyle)">IELTS-style</option>
         </select>
-    </div>
+        <select name="mode">
+            <option value="">Tất cả chế độ</option>
+            <option value="Practice" selected="@(Model.Mode == TestMode.Practice)">Practice</option>
+            <option value="FullMock" selected="@(Model.Mode == TestMode.FullMock)">FullMock</option>
+        </select>
+        <select name="level">
+            <option value="">Tất cả cấp độ</option>
+            @foreach (var level in Model.Levels)
+            {
+                <option value="@level" selected="@(Model.Level == level)">@level</option>
+            }
+        </select>
+        <button type="submit" class="button">Lọc</button>
+    </form>
 
-    <div class="table-card">
-        <div class="responsive-table">
-            <table class="ui-table">
-                <thead>
+    <div class="card table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>Tên bài kiểm tra</th><th>Format</th><th>Mode</th><th>Cấp độ</th><th>Số câu</th><th>Thời gian</th><th>Trạng thái</th><th>Lần làm / tốt nhất</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Tests.Count == 0)
+            {
+                <tr><td colspan="10" class="muted">Không tìm thấy bài kiểm tra phù hợp.</td></tr>
+            }
+            else
+            {
+                @for (var i = 0; i < Model.Tests.Count; i++)
+                {
+                    var test = Model.Tests[i];
                     <tr>
-                        <th>STT</th>
-                        <th>Cấp độ</th>
-                        <th>Số câu</th>
-                        <th>Thời gian</th>
-                        <th>Tên bài kiểm tra</th>
-                        <th>Hành động</th>
+                        <td>@((Model.Page - 1) * Model.PageSize + i + 1)</td>
+                        <td><strong>@test.Title</strong><br /><span class="muted">@test.TopicName · @test.LessonTitle</span></td>
+                        <td><span class="badge">@(test.Format == TestFormat.ToeicStyle ? "TOEIC-style" : "IELTS-style")</span></td>
+                        <td>@test.Mode</td><td>@test.Level</td><td>@test.QuestionCount câu</td><td>@test.DurationMinutes phút</td><td>@(test.IsActive ? "Đang mở" : "Đã tắt")</td>
+                        <td>@test.AttemptCount / @(test.BestScore?.ToString("0.##") ?? "-")</td>
+                        <td><a asp-action="Take" asp-route-id="@test.Id" class="button small">Làm bài</a></td>
                     </tr>
-                </thead>
-
-                <tbody>
-                    @for (var i = 1; i <= 6; i++)
-                    {
-                        <tr>
-                            <td>@i</td>
-                            <td>Cấp độ @(i <= 4 ? 1 : 2)</td>
-                            <td>@(10 + i * 5) câu</td>
-                            <td>@(15 + i * 5) phút</td>
-                            <td>@(i % 2 == 0 ? "Từ vựng cơ bản" : "Ngữ pháp cơ bản")</td>
-                            <td>
-                                <a asp-controller="User"
-                                   asp-action="TestTake"
-                                   class="table-action-link">
-                                    Làm bài
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            }
+            </tbody>
+        </table>
     </div>
 
-    <nav class="compact-pagination">
-        <button type="button">‹</button>
-        <button type="button" class="active">1</button>
-        <button type="button">2</button>
-        <button type="button">3</button>
-        <span>...</span>
-        <button type="button">10</button>
-        <button type="button">›</button>
-    </nav>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pagination" aria-label="Phân trang bài kiểm tra">
+            @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+            {
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-format="@Model.Format" asp-route-mode="@Model.Mode" asp-route-level="@Model.Level" asp-route-page="@pageNumber" asp-route-pageSize="@Model.PageSize" class="@(pageNumber == Model.Page ? "active" : "")">@pageNumber</a>
+            }
+        </nav>
+    }
 </section>

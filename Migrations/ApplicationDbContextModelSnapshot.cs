@@ -46,6 +46,666 @@ namespace SKDJK.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("answers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 20101,
+                            Content = "She is checking in at a hotel.",
+                            IsCorrect = true,
+                            QuestionId = 10101
+                        },
+                        new
+                        {
+                            Id = 20102,
+                            Content = "She is driving a bus.",
+                            IsCorrect = false,
+                            QuestionId = 10101
+                        },
+                        new
+                        {
+                            Id = 20103,
+                            Content = "She is cooking dinner.",
+                            IsCorrect = false,
+                            QuestionId = 10101
+                        },
+                        new
+                        {
+                            Id = 20104,
+                            Content = "At three o'clock.",
+                            IsCorrect = true,
+                            QuestionId = 10102
+                        },
+                        new
+                        {
+                            Id = 20105,
+                            Content = "Yes, I can see it.",
+                            IsCorrect = false,
+                            QuestionId = 10102
+                        },
+                        new
+                        {
+                            Id = 20106,
+                            Content = "For two people.",
+                            IsCorrect = false,
+                            QuestionId = 10102
+                        },
+                        new
+                        {
+                            Id = 20107,
+                            Content = "At the station.",
+                            IsCorrect = true,
+                            QuestionId = 10103
+                        },
+                        new
+                        {
+                            Id = 20108,
+                            Content = "Next Monday.",
+                            IsCorrect = false,
+                            QuestionId = 10103
+                        },
+                        new
+                        {
+                            Id = 20109,
+                            Content = "By email.",
+                            IsCorrect = false,
+                            QuestionId = 10103
+                        },
+                        new
+                        {
+                            Id = 20110,
+                            Content = "A change to the train schedule.",
+                            IsCorrect = true,
+                            QuestionId = 10104
+                        },
+                        new
+                        {
+                            Id = 20111,
+                            Content = "A restaurant opening.",
+                            IsCorrect = false,
+                            QuestionId = 10104
+                        },
+                        new
+                        {
+                            Id = 20112,
+                            Content = "A job interview.",
+                            IsCorrect = false,
+                            QuestionId = 10104
+                        },
+                        new
+                        {
+                            Id = 20113,
+                            Content = "reviews",
+                            IsCorrect = true,
+                            QuestionId = 10105
+                        },
+                        new
+                        {
+                            Id = 20114,
+                            Content = "review",
+                            IsCorrect = false,
+                            QuestionId = 10105
+                        },
+                        new
+                        {
+                            Id = 20115,
+                            Content = "reviewing",
+                            IsCorrect = false,
+                            QuestionId = 10105
+                        },
+                        new
+                        {
+                            Id = 20116,
+                            Content = "complete",
+                            IsCorrect = true,
+                            QuestionId = 10106
+                        },
+                        new
+                        {
+                            Id = 20117,
+                            Content = "completed",
+                            IsCorrect = false,
+                            QuestionId = 10106
+                        },
+                        new
+                        {
+                            Id = 20118,
+                            Content = "From 6:30 a.m. to 10:00 a.m.",
+                            IsCorrect = true,
+                            QuestionId = 10107
+                        },
+                        new
+                        {
+                            Id = 20119,
+                            Content = "At noon.",
+                            IsCorrect = false,
+                            QuestionId = 10107
+                        },
+                        new
+                        {
+                            Id = 20120,
+                            Content = "Only on weekends.",
+                            IsCorrect = false,
+                            QuestionId = 10107
+                        },
+                        new
+                        {
+                            Id = 20121,
+                            Content = "completion",
+                            IsCorrect = false,
+                            QuestionId = 10106
+                        },
+                        new
+                        {
+                            Id = 20301,
+                            Content = "Beside the reception desk",
+                            IsCorrect = true,
+                            QuestionId = 10108
+                        },
+                        new
+                        {
+                            Id = 20302,
+                            Content = "Inside a taxi",
+                            IsCorrect = false,
+                            QuestionId = 10108
+                        },
+                        new
+                        {
+                            Id = 20303,
+                            Content = "Under the bed",
+                            IsCorrect = false,
+                            QuestionId = 10108
+                        },
+                        new
+                        {
+                            Id = 20304,
+                            Content = "It is under your name.",
+                            IsCorrect = true,
+                            QuestionId = 10109
+                        },
+                        new
+                        {
+                            Id = 20305,
+                            Content = "At the bus stop.",
+                            IsCorrect = false,
+                            QuestionId = 10109
+                        },
+                        new
+                        {
+                            Id = 20306,
+                            Content = "Three copies, please.",
+                            IsCorrect = false,
+                            QuestionId = 10109
+                        },
+                        new
+                        {
+                            Id = 20307,
+                            Content = "At 9:00 a.m.",
+                            IsCorrect = true,
+                            QuestionId = 10110
+                        },
+                        new
+                        {
+                            Id = 20308,
+                            Content = "At noon",
+                            IsCorrect = false,
+                            QuestionId = 10110
+                        },
+                        new
+                        {
+                            Id = 20309,
+                            Content = "After dinner",
+                            IsCorrect = false,
+                            QuestionId = 10110
+                        },
+                        new
+                        {
+                            Id = 20310,
+                            Content = "The booking documents",
+                            IsCorrect = true,
+                            QuestionId = 10111
+                        },
+                        new
+                        {
+                            Id = 20311,
+                            Content = "A bicycle",
+                            IsCorrect = false,
+                            QuestionId = 10111
+                        },
+                        new
+                        {
+                            Id = 20312,
+                            Content = "A lunch menu",
+                            IsCorrect = false,
+                            QuestionId = 10111
+                        },
+                        new
+                        {
+                            Id = 20313,
+                            Content = "Next Monday",
+                            IsCorrect = true,
+                            QuestionId = 10112
+                        },
+                        new
+                        {
+                            Id = 20314,
+                            Content = "Last month",
+                            IsCorrect = false,
+                            QuestionId = 10112
+                        },
+                        new
+                        {
+                            Id = 20315,
+                            Content = "Tomorrow evening",
+                            IsCorrect = false,
+                            QuestionId = 10112
+                        },
+                        new
+                        {
+                            Id = 20316,
+                            Content = "Check the updated timetable",
+                            IsCorrect = true,
+                            QuestionId = 10113
+                        },
+                        new
+                        {
+                            Id = 20317,
+                            Content = "Buy a new ticket",
+                            IsCorrect = false,
+                            QuestionId = 10113
+                        },
+                        new
+                        {
+                            Id = 20318,
+                            Content = "Leave the station",
+                            IsCorrect = false,
+                            QuestionId = 10113
+                        },
+                        new
+                        {
+                            Id = 20319,
+                            Content = "return",
+                            IsCorrect = true,
+                            QuestionId = 10114
+                        },
+                        new
+                        {
+                            Id = 20320,
+                            Content = "returns",
+                            IsCorrect = false,
+                            QuestionId = 10114
+                        },
+                        new
+                        {
+                            Id = 20321,
+                            Content = "returned",
+                            IsCorrect = false,
+                            QuestionId = 10114
+                        },
+                        new
+                        {
+                            Id = 20322,
+                            Content = "postponed",
+                            IsCorrect = true,
+                            QuestionId = 10115
+                        },
+                        new
+                        {
+                            Id = 20323,
+                            Content = "postpone",
+                            IsCorrect = false,
+                            QuestionId = 10115
+                        },
+                        new
+                        {
+                            Id = 20324,
+                            Content = "postponing",
+                            IsCorrect = false,
+                            QuestionId = 10115
+                        },
+                        new
+                        {
+                            Id = 20325,
+                            Content = "review",
+                            IsCorrect = true,
+                            QuestionId = 10116
+                        },
+                        new
+                        {
+                            Id = 20326,
+                            Content = "reviewed",
+                            IsCorrect = false,
+                            QuestionId = 10116
+                        },
+                        new
+                        {
+                            Id = 20327,
+                            Content = "reviewing",
+                            IsCorrect = false,
+                            QuestionId = 10116
+                        },
+                        new
+                        {
+                            Id = 20328,
+                            Content = "Before Friday",
+                            IsCorrect = true,
+                            QuestionId = 10117
+                        },
+                        new
+                        {
+                            Id = 20329,
+                            Content = "Next month",
+                            IsCorrect = false,
+                            QuestionId = 10117
+                        },
+                        new
+                        {
+                            Id = 20330,
+                            Content = "After the meeting",
+                            IsCorrect = false,
+                            QuestionId = 10117
+                        },
+                        new
+                        {
+                            Id = 20331,
+                            Content = "Reply next week",
+                            IsCorrect = true,
+                            QuestionId = 10118
+                        },
+                        new
+                        {
+                            Id = 20332,
+                            Content = "Cancel the form",
+                            IsCorrect = false,
+                            QuestionId = 10118
+                        },
+                        new
+                        {
+                            Id = 20333,
+                            Content = "Call the hotel",
+                            IsCorrect = false,
+                            QuestionId = 10118
+                        },
+                        new
+                        {
+                            Id = 20334,
+                            Content = "In the first-floor restaurant",
+                            IsCorrect = true,
+                            QuestionId = 10119
+                        },
+                        new
+                        {
+                            Id = 20335,
+                            Content = "Beside the pool",
+                            IsCorrect = false,
+                            QuestionId = 10119
+                        },
+                        new
+                        {
+                            Id = 20336,
+                            Content = "At reception",
+                            IsCorrect = false,
+                            QuestionId = 10119
+                        },
+                        new
+                        {
+                            Id = 20337,
+                            Content = "The pool",
+                            IsCorrect = true,
+                            QuestionId = 10120
+                        },
+                        new
+                        {
+                            Id = 20338,
+                            Content = "The restaurant",
+                            IsCorrect = false,
+                            QuestionId = 10120
+                        },
+                        new
+                        {
+                            Id = 20339,
+                            Content = "The front desk",
+                            IsCorrect = false,
+                            QuestionId = 10120
+                        },
+                        new
+                        {
+                            Id = 20340,
+                            Content = "At reception",
+                            IsCorrect = true,
+                            QuestionId = 10121
+                        },
+                        new
+                        {
+                            Id = 20341,
+                            Content = "In the restaurant",
+                            IsCorrect = false,
+                            QuestionId = 10121
+                        },
+                        new
+                        {
+                            Id = 20342,
+                            Content = "Online only",
+                            IsCorrect = false,
+                            QuestionId = 10121
+                        },
+                        new
+                        {
+                            Id = 20343,
+                            Content = "A hotel notice",
+                            IsCorrect = true,
+                            QuestionId = 10122
+                        },
+                        new
+                        {
+                            Id = 20344,
+                            Content = "A train ticket",
+                            IsCorrect = false,
+                            QuestionId = 10122
+                        },
+                        new
+                        {
+                            Id = 20345,
+                            Content = "A job advertisement",
+                            IsCorrect = false,
+                            QuestionId = 10122
+                        },
+                        new
+                        {
+                            Id = 20201,
+                            Content = "A single room",
+                            IsCorrect = true,
+                            QuestionId = 10201
+                        },
+                        new
+                        {
+                            Id = 20202,
+                            Content = "A conference room",
+                            IsCorrect = false,
+                            QuestionId = 10201
+                        },
+                        new
+                        {
+                            Id = 20203,
+                            Content = "A family suite",
+                            IsCorrect = false,
+                            QuestionId = 10201
+                        },
+                        new
+                        {
+                            Id = 20204,
+                            Content = "five",
+                            IsCorrect = true,
+                            QuestionId = 10202
+                        },
+                        new
+                        {
+                            Id = 20205,
+                            Content = "5",
+                            IsCorrect = true,
+                            QuestionId = 10202
+                        },
+                        new
+                        {
+                            Id = 20206,
+                            Content = "Environmental science",
+                            IsCorrect = true,
+                            QuestionId = 10203
+                        },
+                        new
+                        {
+                            Id = 20207,
+                            Content = "Modern history",
+                            IsCorrect = false,
+                            QuestionId = 10203
+                        },
+                        new
+                        {
+                            Id = 20208,
+                            Content = "Business law",
+                            IsCorrect = false,
+                            QuestionId = 10203
+                        },
+                        new
+                        {
+                            Id = 20209,
+                            Content = "energy",
+                            IsCorrect = true,
+                            QuestionId = 10204
+                        },
+                        new
+                        {
+                            Id = 20210,
+                            Content = "TRUE",
+                            IsCorrect = false,
+                            QuestionId = 10205
+                        },
+                        new
+                        {
+                            Id = 20211,
+                            Content = "FALSE",
+                            IsCorrect = false,
+                            QuestionId = 10205
+                        },
+                        new
+                        {
+                            Id = 20212,
+                            Content = "NOT GIVEN",
+                            IsCorrect = true,
+                            QuestionId = 10205
+                        },
+                        new
+                        {
+                            Id = 20213,
+                            Content = "YES",
+                            IsCorrect = true,
+                            QuestionId = 10206
+                        },
+                        new
+                        {
+                            Id = 20214,
+                            Content = "NO",
+                            IsCorrect = false,
+                            QuestionId = 10206
+                        },
+                        new
+                        {
+                            Id = 20215,
+                            Content = "NOT GIVEN",
+                            IsCorrect = false,
+                            QuestionId = 10206
+                        },
+                        new
+                        {
+                            Id = 20216,
+                            Content = "electricity",
+                            IsCorrect = true,
+                            QuestionId = 10207
+                        },
+                        new
+                        {
+                            Id = 20401,
+                            Content = "Environmental science",
+                            IsCorrect = false,
+                            QuestionId = 10208
+                        },
+                        new
+                        {
+                            Id = 20402,
+                            Content = "Modern history",
+                            IsCorrect = true,
+                            QuestionId = 10208
+                        },
+                        new
+                        {
+                            Id = 20403,
+                            Content = "Business law",
+                            IsCorrect = false,
+                            QuestionId = 10208
+                        },
+                        new
+                        {
+                            Id = 20404,
+                            Content = "One hour",
+                            IsCorrect = false,
+                            QuestionId = 10209
+                        },
+                        new
+                        {
+                            Id = 20405,
+                            Content = "Two hours",
+                            IsCorrect = true,
+                            QuestionId = 10209
+                        },
+                        new
+                        {
+                            Id = 20406,
+                            Content = "A full day",
+                            IsCorrect = false,
+                            QuestionId = 10209
+                        },
+                        new
+                        {
+                            Id = 20407,
+                            Content = "Online",
+                            IsCorrect = true,
+                            QuestionId = 10210
+                        },
+                        new
+                        {
+                            Id = 20408,
+                            Content = "By telephone only",
+                            IsCorrect = false,
+                            QuestionId = 10210
+                        },
+                        new
+                        {
+                            Id = 20409,
+                            Content = "At the front desk only",
+                            IsCorrect = false,
+                            QuestionId = 10210
+                        },
+                        new
+                        {
+                            Id = 20410,
+                            Content = "Paragraph A",
+                            IsCorrect = false,
+                            QuestionId = 10211
+                        },
+                        new
+                        {
+                            Id = 20411,
+                            Content = "Paragraph B",
+                            IsCorrect = true,
+                            QuestionId = 10211
+                        },
+                        new
+                        {
+                            Id = 20412,
+                            Content = "Neither paragraph",
+                            IsCorrect = false,
+                            QuestionId = 10211
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.Language", b =>
@@ -77,6 +737,22 @@ namespace SKDJK.Migrations
                         .IsUnique();
 
                     b.ToTable("languages", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10001,
+                            Code = "en-demo",
+                            Description = "Ngôn ngữ dùng cho dữ liệu demo TOEIC/IELTS-style.",
+                            Name = "Tiếng Anh"
+                        },
+                        new
+                        {
+                            Id = 10002,
+                            Code = "ja-demo",
+                            Description = "Ngôn ngữ mẫu bổ sung.",
+                            Name = "Tiếng Nhật"
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.LearningProgress", b =>
@@ -147,6 +823,40 @@ namespace SKDJK.Migrations
                     b.HasIndex("TopicId");
 
                     b.ToTable("lessons", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10001,
+                            Content = "Thì hiện tại đơn được dùng để nói về thói quen và sự thật. Cấu trúc: S + V(s/es). Ví dụ: She books a room online.",
+                            Description = "Học từ vựng và mẫu câu đặt phòng.",
+                            Title = "Đặt phòng khách sạn",
+                            TopicId = 10001
+                        },
+                        new
+                        {
+                            Id = 10002,
+                            Content = "Dùng Can you tell me...? hoặc How can I get to...? để hỏi đường một cách lịch sự.",
+                            Description = "Hỏi đường, vị trí và phương tiện đi lại.",
+                            Title = "Hỏi đường và phương tiện",
+                            TopicId = 10001
+                        },
+                        new
+                        {
+                            Id = 10003,
+                            Content = "Dùng hiện tại đơn để mô tả công việc thường ngày và lịch làm việc.",
+                            Description = "Từ vựng văn phòng cơ bản.",
+                            Title = "Giao tiếp tại nơi làm việc",
+                            TopicId = 10002
+                        },
+                        new
+                        {
+                            Id = 10004,
+                            Content = "こんにちは được dùng để chào hỏi vào ban ngày.",
+                            Description = "Các lời chào thông dụng.",
+                            Title = "Lời chào cơ bản",
+                            TopicId = 10003
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.PronunciationResult", b =>
@@ -192,11 +902,36 @@ namespace SKDJK.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ContextText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar");
+
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
 
+                    b.Property<string>("Instruction")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<int?>("MaxWords")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PartNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("QuestionType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("SectionName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar");
@@ -206,9 +941,437 @@ namespace SKDJK.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TestId");
+                    b.HasIndex("TestId", "Order")
+                        .IsUnique();
 
                     b.ToTable("questions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10101,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What is the person doing?",
+                            GroupCode = "TOEIC-P1-Q01",
+                            ImageUrl = "/images/toeic-part1.svg",
+                            Instruction = "Choose the best answer.",
+                            Order = 1,
+                            PartNumber = 1,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10108,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Where is the suitcase?",
+                            GroupCode = "TOEIC-P1-Q02",
+                            ImageUrl = "/images/toeic-part1.svg",
+                            Instruction = "Choose the best answer.",
+                            Order = 2,
+                            PartNumber = 1,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10102,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Choose the best response to the recorded question.",
+                            GroupCode = "TOEIC-P2-Q01",
+                            Instruction = "Choose the best answer.",
+                            Order = 3,
+                            PartNumber = 2,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10109,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Choose the best response about the reservation.",
+                            GroupCode = "TOEIC-P2-Q02",
+                            Instruction = "Choose the best answer.",
+                            Order = 4,
+                            PartNumber = 2,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10103,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Where will the speakers meet?",
+                            GroupCode = "TOEIC-P3-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 5,
+                            PartNumber = 3,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10110,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What time will they meet?",
+                            GroupCode = "TOEIC-P3-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 6,
+                            PartNumber = 3,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10111,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What will the woman bring?",
+                            GroupCode = "TOEIC-P3-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 7,
+                            PartNumber = 3,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10104,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What is the announcement mainly about?",
+                            GroupCode = "TOEIC-P4-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 8,
+                            PartNumber = 4,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10112,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "When will the change begin?",
+                            GroupCode = "TOEIC-P4-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 9,
+                            PartNumber = 4,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10113,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What are listeners asked to do?",
+                            GroupCode = "TOEIC-P4-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 10,
+                            PartNumber = 4,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10105,
+                            Content = "The manager _____ the report every Monday.",
+                            Instruction = "Choose the best answer.",
+                            Order = 11,
+                            PartNumber = 5,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10114,
+                            Content = "Guests should _____ their keys at reception.",
+                            Instruction = "Choose the best answer.",
+                            Order = 12,
+                            PartNumber = 5,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10115,
+                            Content = "The meeting was _____ until Friday.",
+                            Instruction = "Choose the best answer.",
+                            Order = 13,
+                            PartNumber = 5,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10106,
+                            Content = "Choose the word that best completes blank 1.",
+                            ContextText = "Thank you for your interest. Please complete the attached form before Friday. Our team will review it and reply next week.",
+                            GroupCode = "TOEIC-P6-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 14,
+                            PartNumber = 6,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10116,
+                            Content = "Choose the word that best completes blank 2.",
+                            ContextText = "Thank you for your interest. Please complete the attached form before Friday. Our team will review it and reply next week.",
+                            GroupCode = "TOEIC-P6-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 15,
+                            PartNumber = 6,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10117,
+                            Content = "When should the form be returned?",
+                            ContextText = "Thank you for your interest. Please complete the attached form before Friday. Our team will review it and reply next week.",
+                            GroupCode = "TOEIC-P6-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 16,
+                            PartNumber = 6,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10118,
+                            Content = "What will the team do next?",
+                            ContextText = "Thank you for your interest. Please complete the attached form before Friday. Our team will review it and reply next week.",
+                            GroupCode = "TOEIC-P6-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 17,
+                            PartNumber = 6,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10107,
+                            Content = "When does the hotel serve breakfast?",
+                            ContextText = "Hotel notice: Breakfast is served from 6:30 a.m. to 10:00 a.m. The pool closes at 9:00 p.m. Guests can request a late checkout at reception.",
+                            GroupCode = "TOEIC-P7-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 18,
+                            PartNumber = 7,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10119,
+                            Content = "Where is breakfast served?",
+                            ContextText = "Hotel notice: Breakfast is served from 6:30 a.m. to 10:00 a.m. The pool closes at 9:00 p.m. Guests can request a late checkout at reception.",
+                            GroupCode = "TOEIC-P7-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 19,
+                            PartNumber = 7,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10120,
+                            Content = "What closes at 9:00 p.m.?",
+                            ContextText = "Hotel notice: Breakfast is served from 6:30 a.m. to 10:00 a.m. The pool closes at 9:00 p.m. Guests can request a late checkout at reception.",
+                            GroupCode = "TOEIC-P7-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 20,
+                            PartNumber = 7,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10121,
+                            Content = "Where can guests request late checkout?",
+                            ContextText = "Hotel notice: Breakfast is served from 6:30 a.m. to 10:00 a.m. The pool closes at 9:00 p.m. Guests can request a late checkout at reception.",
+                            GroupCode = "TOEIC-P7-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 21,
+                            PartNumber = 7,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10122,
+                            Content = "What type of text is this?",
+                            ContextText = "Hotel notice: Breakfast is served from 6:30 a.m. to 10:00 a.m. The pool closes at 9:00 p.m. Guests can request a late checkout at reception.",
+                            GroupCode = "TOEIC-P7-G01",
+                            Instruction = "Choose the best answer.",
+                            Order = 22,
+                            PartNumber = 7,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10001
+                        },
+                        new
+                        {
+                            Id = 10202,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "The museum closes at ____ p.m.",
+                            GroupCode = "IELTS-L1-G01",
+                            Instruction = "NO MORE THAN ONE WORD AND/OR A NUMBER.",
+                            MaxWords = 1,
+                            Order = 1,
+                            PartNumber = 1,
+                            QuestionType = "ListeningFill",
+                            SectionName = "Listening",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10201,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "What type of room does the caller request?",
+                            GroupCode = "IELTS-L2-G01",
+                            Order = 2,
+                            PartNumber = 2,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10203,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Which subject is assigned to Student A?",
+                            GroupCode = "IELTS-L3-G01",
+                            Instruction = "Match each student with the correct subject.",
+                            Order = 3,
+                            PartNumber = 3,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10208,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "Which subject is assigned to Student B?",
+                            GroupCode = "IELTS-L3-G01",
+                            Instruction = "Match each student with the correct subject.",
+                            Order = 4,
+                            PartNumber = 3,
+                            QuestionType = "ListeningChoice",
+                            SectionName = "Listening",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10204,
+                            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                            Content = "The lecture focuses on renewable ____.",
+                            GroupCode = "IELTS-L4-G01",
+                            Instruction = "NO MORE THAN ONE WORD.",
+                            MaxWords = 1,
+                            Order = 5,
+                            PartNumber = 4,
+                            QuestionType = "ListeningFill",
+                            SectionName = "Listening",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10209,
+                            Content = "How long may a student reserve a quiet room?",
+                            ContextText = "The campus library now offers quiet rooms and online booking. Students can reserve a room for up to two hours.",
+                            GroupCode = "IELTS-R1-G01",
+                            Order = 6,
+                            PartNumber = 1,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10210,
+                            Content = "How are the rooms booked?",
+                            ContextText = "The campus library now offers quiet rooms and online booking. Students can reserve a room for up to two hours.",
+                            GroupCode = "IELTS-R1-G01",
+                            Order = 7,
+                            PartNumber = 1,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10205,
+                            Content = "The library opens every Sunday.",
+                            ContextText = "The city library opens Monday to Saturday. In the writer's view, remote access improves study flexibility. The notice gives no information about Sunday opening.",
+                            GroupCode = "IELTS-R2-G01",
+                            Instruction = "Do the statements agree with the information in the passage?",
+                            Order = 8,
+                            PartNumber = 2,
+                            QuestionType = "TrueFalseNotGiven",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10206,
+                            Content = "The writer believes remote access improves study flexibility.",
+                            ContextText = "The city library opens Monday to Saturday. In the writer's view, remote access improves study flexibility. The notice gives no information about Sunday opening.",
+                            GroupCode = "IELTS-R2-G01",
+                            Instruction = "Do the statements agree with the views of the writer?",
+                            Order = 9,
+                            PartNumber = 2,
+                            QuestionType = "YesNoNotGiven",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10207,
+                            Content = "Solar panels convert sunlight into ____.",
+                            ContextText = "Solar panels capture sunlight and convert it into electricity. Paragraph A explains collection, while Paragraph B describes storage.",
+                            GroupCode = "IELTS-R3-G01",
+                            Instruction = "NO MORE THAN ONE WORD.",
+                            MaxWords = 1,
+                            Order = 10,
+                            PartNumber = 3,
+                            QuestionType = "FillBlank",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        },
+                        new
+                        {
+                            Id = 10211,
+                            Content = "Which paragraph describes energy storage?",
+                            ContextText = "Solar panels capture sunlight and convert it into electricity. Paragraph A explains collection, while Paragraph B describes storage.",
+                            GroupCode = "IELTS-R3-G01",
+                            Instruction = "Choose paragraph A or B.",
+                            Order = 11,
+                            PartNumber = 3,
+                            QuestionType = "MultipleChoice",
+                            SectionName = "Reading",
+                            TestId = 10002
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.Role", b =>
@@ -254,12 +1417,35 @@ namespace SKDJK.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar");
 
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -271,6 +1457,32 @@ namespace SKDJK.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("tests", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10001,
+                            CreatedAt = new DateTime(2026, 8, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Bài luyện tập nội bộ có đủ Part và group dùng chung audio/passage.",
+                            DurationMinutes = 40,
+                            Format = "ToeicStyle",
+                            IsActive = true,
+                            LessonId = 10001,
+                            Mode = "Practice",
+                            Title = "TOEIC-style Listening & Reading Practice"
+                        },
+                        new
+                        {
+                            Id = 10002,
+                            CreatedAt = new DateTime(2026, 8, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Bài luyện tập nội bộ có đủ Listening Part 1-4 và Reading Passage 1-3.",
+                            DurationMinutes = 40,
+                            Format = "IeltsStyle",
+                            IsActive = true,
+                            LessonId = 10003,
+                            Mode = "Practice",
+                            Title = "IELTS Academic Listening & Reading Practice"
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.TestResult", b =>
@@ -287,13 +1499,19 @@ namespace SKDJK.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<decimal>("Score")
-                        .HasColumnType("decimal(3,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("Datetime2");
 
                     b.Property<int>("TestId")
                         .HasColumnType("int");
+
+                    b.Property<int>("TotalQuestions")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -320,7 +1538,6 @@ namespace SKDJK.Migrations
                         .HasColumnType("nvarchar");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LanguageId")
@@ -329,7 +1546,7 @@ namespace SKDJK.Migrations
                     b.Property<string>("Level")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar");
+                        .HasColumnType("nvarchar");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -341,6 +1558,35 @@ namespace SKDJK.Migrations
                     b.HasIndex("LanguageId");
 
                     b.ToTable("topics", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10001,
+                            Description = "Từ vựng và kỹ năng giao tiếp trong các tình huống du lịch.",
+                            ImageUrl = "/images/topic-travel.svg",
+                            LanguageId = 10001,
+                            Level = "Trung cấp",
+                            Name = "Giao tiếp và du lịch"
+                        },
+                        new
+                        {
+                            Id = 10002,
+                            Description = "Mẫu câu thường gặp trong học tập và công việc.",
+                            ImageUrl = "/images/topic-work.svg",
+                            LanguageId = 10001,
+                            Level = "Cơ bản",
+                            Name = "Học tập và công việc"
+                        },
+                        new
+                        {
+                            Id = 10003,
+                            Description = "Các mẫu chào hỏi đơn giản.",
+                            ImageUrl = "/images/topic-japanese.svg",
+                            LanguageId = 10002,
+                            Level = "Cơ bản",
+                            Name = "Chào hỏi tiếng Nhật"
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.User", b =>
@@ -397,6 +1643,41 @@ namespace SKDJK.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SKDJK.Models.UserAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AnswerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TestResultId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextAnswer")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("TestResultId");
+
+                    b.ToTable("useranswers", (string)null);
+                });
+
             modelBuilder.Entity("SKDJK.Models.Vocabulary", b =>
                 {
                     b.Property<int>("Id")
@@ -433,6 +1714,80 @@ namespace SKDJK.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("vocabularies", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 10001,
+                            Example = "It was a long journey across the country.",
+                            LessonId = 10001,
+                            Meaning = "hành trình",
+                            Pronunciation = "/ˈdʒɜːni/",
+                            Word = "journey"
+                        },
+                        new
+                        {
+                            Id = 10002,
+                            Example = "I have a reservation for two nights.",
+                            LessonId = 10001,
+                            Meaning = "đặt chỗ",
+                            Pronunciation = "/ˌrezəˈveɪʃn/",
+                            Word = "reservation"
+                        },
+                        new
+                        {
+                            Id = 10003,
+                            Example = "Your luggage is beside the desk.",
+                            LessonId = 10001,
+                            Meaning = "hành lý",
+                            Pronunciation = "/ˈlʌɡɪdʒ/",
+                            Word = "luggage"
+                        },
+                        new
+                        {
+                            Id = 10004,
+                            Example = "The station is near the hotel.",
+                            LessonId = 10002,
+                            Meaning = "nhà ga",
+                            Pronunciation = "/ˈsteɪʃn/",
+                            Word = "station"
+                        },
+                        new
+                        {
+                            Id = 10005,
+                            Example = "Could you give me directions?",
+                            LessonId = 10002,
+                            Meaning = "phương hướng",
+                            Pronunciation = "/dəˈrekʃn/",
+                            Word = "direction"
+                        },
+                        new
+                        {
+                            Id = 10006,
+                            Example = "The meeting starts at nine.",
+                            LessonId = 10003,
+                            Meaning = "cuộc họp",
+                            Pronunciation = "/ˈmiːtɪŋ/",
+                            Word = "meeting"
+                        },
+                        new
+                        {
+                            Id = 10007,
+                            Example = "The deadline is Friday.",
+                            LessonId = 10003,
+                            Meaning = "hạn chót",
+                            Pronunciation = "/ˈdedlaɪn/",
+                            Word = "deadline"
+                        },
+                        new
+                        {
+                            Id = 10008,
+                            Example = "Hello, nice to meet you.",
+                            LessonId = 10004,
+                            Meaning = "xin chào",
+                            Pronunciation = "/həˈləʊ/",
+                            Word = "hello"
+                        });
                 });
 
             modelBuilder.Entity("SKDJK.Models.Answer", b =>
@@ -570,6 +1925,35 @@ namespace SKDJK.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("SKDJK.Models.UserAnswer", b =>
+                {
+                    b.HasOne("SKDJK.Models.Answer", "Answer")
+                        .WithMany("UserAnswers")
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_UserAnswer_Answer");
+
+                    b.HasOne("SKDJK.Models.Question", "Question")
+                        .WithMany("UserAnswers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAnswer_Question");
+
+                    b.HasOne("SKDJK.Models.TestResult", "TestResult")
+                        .WithMany("UserAnswers")
+                        .HasForeignKey("TestResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAnswer_TestResult");
+
+                    b.Navigation("Answer");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("TestResult");
+                });
+
             modelBuilder.Entity("SKDJK.Models.Vocabulary", b =>
                 {
                     b.HasOne("SKDJK.Models.Lesson", "Lesson")
@@ -580,6 +1964,11 @@ namespace SKDJK.Migrations
                         .HasConstraintName("FK_Vocabulary_Lesson");
 
                     b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("SKDJK.Models.Answer", b =>
+                {
+                    b.Navigation("UserAnswers");
                 });
 
             modelBuilder.Entity("SKDJK.Models.Language", b =>
@@ -599,6 +1988,8 @@ namespace SKDJK.Migrations
             modelBuilder.Entity("SKDJK.Models.Question", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("UserAnswers");
                 });
 
             modelBuilder.Entity("SKDJK.Models.Role", b =>
@@ -611,6 +2002,11 @@ namespace SKDJK.Migrations
                     b.Navigation("Questions");
 
                     b.Navigation("TestResults");
+                });
+
+            modelBuilder.Entity("SKDJK.Models.TestResult", b =>
+                {
+                    b.Navigation("UserAnswers");
                 });
 
             modelBuilder.Entity("SKDJK.Models.Topic", b =>

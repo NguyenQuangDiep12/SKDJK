@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" role="img" aria-label="Hình minh họa câu hỏi Part 1">
+  <rect width="600" height="320" fill="#f8fafc"/>
+  <rect x="80" y="75" width="440" height="190" rx="18" fill="#dbeafe" stroke="#6366f1" stroke-width="4"/>
+  <circle cx="210" cy="135" r="28" fill="#6366f1"/>
+  <path d="M170 230c8-55 20-75 40-75s32 20 40 75" fill="#818cf8"/>
+  <rect x="295" y="120" width="150" height="90" rx="8" fill="#fff"/>
+  <text x="318" y="170" font-family="Arial" font-size="24" fill="#334155">HOTEL</text>
+  <text x="190" y="300" font-family="Arial" font-size="22" fill="#475569">TOEIC-style Part 1 demo</text>
+</svg>

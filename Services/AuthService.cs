@@ -1,102 +1,100 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SKDJK.Data;
 using SKDJK.Dtos;
-using SKDJK.Models.commons;
-using SKDJK.Services.Interfaces;
-using SKDJK.Models.enums;
 using SKDJK.Models;
+using SKDJK.Models.commons;
+using SKDJK.Models.enums;
+using SKDJK.Services.Interfaces;
 
 namespace SKDJK.Services
 {
-    public class AuthService : IAuthService
+    // AuthService nhận DTO từ Controller và không biết Login/Register ViewModel.
+    public sealed class AuthService : IAuthService
     {
-        private readonly ApplicationDbContext dbContext;
-        public AuthService(ApplicationDbContext _dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public AuthService(ApplicationDbContext dbContext)
         {
-            this.dbContext = _dbContext;
+            _dbContext = dbContext;
         }
-        public async Task<Result<AuthenticatedUserDto>> LoginAsync(string Email, string Password)
+
+        public async Task<Result<AuthenticatedUserDto>> LoginAsync(LoginRequestDto request)
         {
-           if(string.IsNullOrWhiteSpace(Email) ||
-              string.IsNullOrWhiteSpace(Password))
-           {
-                return Result<AuthenticatedUserDto>.Failure(Error.InvalidInput);
-           }
-
-            Email = Email.Trim().ToLower();
-
-            var user = await dbContext
-                .Users
-                .Include(u => u.Role)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == Email);
-
-            if (user == null)
-                return Result<AuthenticatedUserDto>
-                    .Failure(Error.InvalidCreadential);
-            bool IsCorrectPassword = BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash);
-
-            if (!IsCorrectPassword)
-                return Result<AuthenticatedUserDto>
-                    .Failure(Error.InvalidCreadential);
-
-            var authenticatedUser = new AuthenticatedUserDto
+            // Service vẫn kiểm tra dữ liệu để không phụ thuộc hoàn toàn vào ModelState của UI.
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             {
-                Email = Email,
+                return Result<AuthenticatedUserDto>.Failure(Error.InvalidInput);
+            }
+
+            // Chuẩn hóa email trước khi truy vấn.
+            string email = request.Email.Trim().ToLowerInvariant();
+
+            // Tải User và Role cần để tạo authentication claim.
+            User? user = await _dbContext.Users
+                .Include(x => x.Role)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Email == email);
+
+            // Không phân biệt email sai và mật khẩu sai để tránh lộ tài khoản tồn tại.
+            if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return Result<AuthenticatedUserDto>.Failure(Error.InvalidCreadential);
+            }
+
+            // Chỉ trả dữ liệu cần cho Controller tạo cookie.
+            AuthenticatedUserDto dto = new()
+            {
+                UserId = user.Id,
+                Email = user.Email,
                 FullName = user.FullName,
-                RoleName = user.Role.RoleName.ToString(),
-                UserId = user.Id
+                RoleName = user.Role.RoleName.ToString()
             };
 
-            return Result<AuthenticatedUserDto>
-                .Success(authenticatedUser);
+            return Result<AuthenticatedUserDto>.Success(dto);
         }
 
-        public async Task<Result> RegisterAsync(string FullName, string Email, string Password)
+        public async Task<Result> RegisterAsync(RegisterRequestDto request)
         {
-            if(string.IsNullOrWhiteSpace(FullName) ||
-               string.IsNullOrWhiteSpace(Email)    ||
-               string.IsNullOrWhiteSpace(Password))
+            // Kiểm tra lại DTO ở tầng nghiệp vụ.
+            if (string.IsNullOrWhiteSpace(request.FullName)
+                || string.IsNullOrWhiteSpace(request.Email)
+                || string.IsNullOrWhiteSpace(request.Password))
             {
-                return Result
-                    .Failure(Error.InvalidInput);
+                return Result.Failure(Error.InvalidInput);
             }
-            FullName = FullName.Trim();
-            Email = Email.Trim().ToLower();
 
-            bool emailExist = await dbContext
-                .Users
-                .AnyAsync(u => u.Email == Email);
+            // Chuẩn hóa dữ liệu trước khi kiểm tra trùng.
+            string fullName = request.FullName.Trim();
+            string email = request.Email.Trim().ToLowerInvariant();
 
-            if (emailExist)
+            // Email phải duy nhất.
+            bool emailExists = await _dbContext.Users.AnyAsync(x => x.Email == email);
+            if (emailExists)
             {
                 return Result.Failure(Error.EmailAlreadyExist);
             }
 
-
-            var userRole = await dbContext
-                .Roles
+            // Tài khoản tự đăng ký luôn nhận role USER.
+            Role? userRole = await _dbContext.Roles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(r => r.RoleName == UserRole.USER);
+                .FirstOrDefaultAsync(x => x.RoleName == UserRole.USER);
 
-            if (userRole == null)
+            if (userRole is null)
             {
-                throw new InvalidOperationException("User role chua duoc cau hinh trong he thong");
+                return Result.Failure(new Error("Auth.RoleMissing", "Role USER chưa được cấu hình."));
             }
 
-            string PasswordHash = BCrypt.Net.BCrypt.HashPassword(Password);
-
-            var user = new User
+            // Chỉ lưu password hash BCrypt.
+            User user = new()
             {
-                Email = Email,
-                FullName = FullName,
-                PasswordHash = PasswordHash,
+                Email = email,
+                FullName = fullName,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 RoleId = userRole.Id
             };
 
-            await dbContext.AddAsync(user);
-            await dbContext.SaveChangesAsync();
-
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
             return Result.Success();
         }
     }

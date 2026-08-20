@@ -1,0 +1,12 @@
+@model AdminTestFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa bài kiểm tra" : "Thêm bài kiểm tra";
+}
+<section class="page"><header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Điểm luôn là điểm nội bộ 0-100.</p></div></header>
+    <form asp-action="Save" method="post" class="card form-grid">@Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="Title"></label><input asp-for="Title" /><span asp-validation-for="Title"></span></div><div class="field"><label asp-for="LessonId"></label><select asp-for="LessonId"><option value="">Chọn bài học</option>@foreach(var lesson in Model.Lessons){<option value="@lesson.Id">@lesson.Title</option>}</select><span asp-validation-for="LessonId"></span></div>
+        <div class="field"><label asp-for="Format"></label><select asp-for="Format" asp-items="Html.GetEnumSelectList<TestFormat>()"></select></div><div class="field"><label asp-for="Mode"></label><select asp-for="Mode" asp-items="Html.GetEnumSelectList<TestMode>()"></select></div>
+        <div class="field"><label asp-for="DurationMinutes"></label><input asp-for="DurationMinutes" type="number" /><span asp-validation-for="DurationMinutes"></span></div><div class="field"><label><input asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)</label></div>
+        <div class="field full"><label asp-for="Description"></label><textarea asp-for="Description" rows="4"></textarea></div><div class="field full muted">FullMock chỉ lưu được sau khi đề đã đủ cấu trúc: TOEIC 200 câu/120 phút hoặc IELTS 40 Listening + 40 Reading/90 phút.</div><div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="TestManagementDashboard" class="button secondary">Hủy</a><button type="submit" class="button">Lưu bài kiểm tra</button></div>
+    </form>
+</section>

@@ -1,76 +1,45 @@
-﻿@{
+@model TestResultViewModel
+@{
     ViewData["Title"] = "Kết quả bài kiểm tra";
 }
-
-<section class="user-page test-result-page">
-
-    <header class="result-heading">
-        <h1>Kết quả bài kiểm tra</h1>
-        <p>Xem kết quả và chi tiết bài làm của bạn.</p>
-    </header>
-
-    <section class="ui-card result-summary-card">
-
-        <div class="result-score-side">
-            <span>KẾT QUẢ</span>
-
-            <div class="result-score-circle">
-                <strong>85%</strong>
-            </div>
-
-            <strong class="result-pass-text">ĐẠT</strong>
+<section class="page">
+    <header class="page-heading"><div><h1>Kết quả bài kiểm tra</h1><p>@Model.TestTitle · @(Model.Format == TestFormat.ToeicStyle ? "TOEIC-style" : "IELTS-style") · @Model.Mode · Điểm nội bộ SKDJK</p></div></header>
+    <section class="card grid grid-2" style="align-items:center;margin-bottom:16px">
+        <div style="display:grid;place-items:center"><div class="result-score">@Model.Score.ToString("0.##")%</div><span class="badge @(Model.IsPassed ? "success" : "danger")" style="margin-top:12px">@(Model.IsPassed ? "ĐẠT YÊU CẦU" : "CẦN CẢI THIỆN")</span></div>
+        <div class="grid grid-2">
+            <div><span class="muted">Số câu đúng</span><h2>@Model.CorrectCount</h2></div>
+            <div><span class="muted">Số câu sai/chưa trả lời</span><h2>@Model.WrongCount</h2></div>
+            <div><span class="muted">Tổng số câu</span><h2>@Model.TotalQuestions</h2></div>
+            <div><span class="muted">Ngày nộp</span><h3>@Model.SubmittedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</h3></div>
         </div>
-
-        <div class="result-details">
-            <p>⚙ Điểm số: <strong>85 /100</strong></p>
-            <p class="status-success">✓ Số câu đúng: <strong>17</strong></p>
-            <p class="status-danger">✕ Số câu sai: <strong>3</strong></p>
-            <p>☷ Tổng số câu: <strong>20</strong></p>
-            <p>◷ Thời gian làm bài: <strong>22:38</strong></p>
-            <p>▣ Ngày nộp bài: <strong>20/05/2025 14:30</strong></p>
-        </div>
-
     </section>
 
-    <div class="result-badge">
-        ✓ ĐẠT YÊU CẦU
-    </div>
-
-    <section class="ui-card result-questions-card">
-        <div class="result-legend">
-            <span class="status-success">● Đúng</span>
-            <span class="status-danger">■ Sai</span>
-            <span>○ Chưa trả lời</span>
-        </div>
-
-        <h2>Câu hỏi</h2>
-
-        <div class="result-question-grid">
-            @for (var i = 1; i <= 20; i++)
+    @* Breakdown chỉ là phần trăm nội bộ theo Section, không quy đổi TOEIC/IELTS chính thức. *@
+    <section class="card" style="margin-bottom:16px">
+        <h2 style="margin-top:0">Kết quả theo phần</h2>
+        <div class="grid grid-2">
+            @foreach (var resultSection in Model.Sections)
             {
-                var css = i == 4 || i == 8
-                ? "wrong"
-                : "correct";
-
-                <button type="button"
-                        class="@css">
-                    @i
-                </button>
+                <div><strong>@resultSection.SectionName</strong><p>@resultSection.CorrectCount/@resultSection.TotalQuestions câu · Điểm SKDJK: @resultSection.Score.ToString("0.##")%</p></div>
             }
         </div>
     </section>
 
-    <div class="result-actions">
-        <button type="button"
-                class="ui-secondary-button">
-            ↻ Làm lại
-        </button>
-
-        <a asp-controller="User"
-           asp-action="Tests"
-           class="ui-dark-button">
-            ← Quay lại danh sách
-        </a>
-    </div>
-
+    <section class="card">
+        <h2 style="margin-top:0">Chi tiết câu trả lời</h2>
+        <div class="grid">
+            @foreach (var question in Model.Questions)
+            {
+                <article class="result-question @(question.IsCorrect ? "correct" : "")">
+                    <strong>Câu @question.Number. @question.Content</strong>
+                    <p>Bạn trả lời: <strong>@(string.IsNullOrWhiteSpace(question.UserAnswer) ? "Chưa trả lời" : question.UserAnswer)</strong></p>
+                    @if (!question.IsCorrect)
+                    {
+                        <p class="muted">Đáp án đúng: @question.CorrectAnswer</p>
+                    }
+                </article>
+            }
+        </div>
+    </section>
+    <div class="vocab-actions"><a asp-action="Take" asp-route-id="@Model.TestId" class="button secondary">↻ Làm lại</a><a asp-action="History" class="button secondary">Lịch sử</a><a asp-action="Index" class="button">← Quay lại danh sách</a></div>
 </section>

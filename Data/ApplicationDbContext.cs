@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SKDJK.Models;
 using SKDJK.Models.enums;
 
@@ -8,6 +8,7 @@ namespace SKDJK.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<LearningProgress> LearningProgress { get; set; }
@@ -58,6 +59,8 @@ namespace SKDJK.Data
                     RoleId = 2
                 }
             );
+
+            DemoData.Configure(modelBuilder);
 
         }
     }

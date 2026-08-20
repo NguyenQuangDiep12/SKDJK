@@ -1,4 +1,4 @@
-﻿using SKDJK.Models.enums;
+using SKDJK.Models.enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace SKDJK.ViewModels
@@ -8,6 +8,18 @@ namespace SKDJK.ViewModels
         public string? Search { get; set; }
 
         public string? Level { get; set; }
+
+        public TestFormat? Format { get; set; }
+
+        public TestMode? Mode { get; set; }
+
+        public int Page { get; set; } = 1;
+
+        public int PageSize { get; set; } = 10;
+
+        public int TotalItems { get; set; }
+
+        public int TotalPages => PageSize <= 0 ? 1 : (int)Math.Ceiling((double)TotalItems / PageSize);
 
         public List<string> Levels { get; set; } = new();
 
@@ -33,6 +45,12 @@ namespace SKDJK.ViewModels
         public decimal? BestScore { get; set; }
 
         public int AttemptCount { get; set; }
+
+        public TestFormat Format { get; set; }
+
+        public TestMode Mode { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     public class TakeTestViewModel
@@ -49,6 +67,25 @@ namespace SKDJK.ViewModels
 
         public int DurationMinutes { get; set; }
 
+        public TestFormat Format { get; set; }
+
+        public TestMode Mode { get; set; }
+
+        public List<TestQuestionViewModel> Questions { get; set; } = new();
+
+        public List<TestQuestionGroupViewModel> Groups { get; set; } = new();
+    }
+
+    // Một group gom audio/passage dùng chung để Razor chỉ render nội dung chung một lần.
+    public class TestQuestionGroupViewModel
+    {
+        public string Key { get; set; } = string.Empty;
+        public string SectionName { get; set; } = string.Empty;
+        public int PartNumber { get; set; }
+        public string? GroupCode { get; set; }
+        public string? ContextText { get; set; }
+        public string? AudioUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public List<TestQuestionViewModel> Questions { get; set; } = new();
     }
 
@@ -63,6 +100,20 @@ namespace SKDJK.ViewModels
         public string? ImageUrl { get; set; }
 
         public string? AudioUrl { get; set; }
+
+        public string SectionName { get; set; } = string.Empty;
+
+        public int PartNumber { get; set; }
+
+        public int Order { get; set; }
+
+        public string? ContextText { get; set; }
+
+        public string? GroupCode { get; set; }
+
+        public string? Instruction { get; set; }
+
+        public int? MaxWords { get; set; }
 
         public List<TestAnswerOptionViewModel> Answers { get; set; } = new();
     }
@@ -110,9 +161,26 @@ namespace SKDJK.ViewModels
 
         public DateTime? SubmittedAt { get; set; }
 
-        public bool IsPassed => Score >= 70;
+        public TestFormat Format { get; set; }
+
+        public TestMode Mode { get; set; }
+
+        public decimal PassingScore { get; set; } = 70;
+
+        public bool IsPassed => Score >= PassingScore;
 
         public List<QuestionResultViewModel> Questions { get; set; } = new();
+
+        public List<TestSectionResultViewModel> Sections { get; set; } = new();
+    }
+
+    // Breakdown chỉ hiển thị số đúng/tổng và phần trăm nội bộ theo từng Section.
+    public class TestSectionResultViewModel
+    {
+        public string SectionName { get; set; } = string.Empty;
+        public int CorrectCount { get; set; }
+        public int TotalQuestions { get; set; }
+        public decimal Score => TotalQuestions == 0 ? 0 : Math.Round(CorrectCount * 100m / TotalQuestions, 2);
     }
 
     public class QuestionResultViewModel
@@ -122,6 +190,8 @@ namespace SKDJK.ViewModels
         public int Number { get; set; }
 
         public string Content { get; set; } = string.Empty;
+
+        public string SectionName { get; set; } = string.Empty;
 
         public bool IsCorrect { get; set; }
 
@@ -152,5 +222,9 @@ namespace SKDJK.ViewModels
         public int TotalQuestions { get; set; }
 
         public DateTime? SubmittedAt { get; set; }
+
+        public TestFormat Format { get; set; }
+
+        public TestMode Mode { get; set; }
     }
 }

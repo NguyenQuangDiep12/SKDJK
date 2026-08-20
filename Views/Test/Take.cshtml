@@ -1,81 +1,323 @@
-﻿@{
+@model TakeTestViewModel
+@{
+    // Đặt tiêu đề tab trình duyệt.
     ViewData["Title"] = "Làm bài kiểm tra";
+
+    // Index form phải tăng liên tục qua mọi group để MVC bind Answers[i] chính xác.
+    var answerIndex = 0;
+
+    // Số câu hiển thị tăng độc lập với số group.
+    var questionNumber = 0;
 }
 
-<section class="user-page test-take-page">
+<section class="page test-shell">
+    @* Hiển thị lỗi validation hoặc lỗi nghiệp vụ do server trả về. *@
+    <div asp-validation-summary="ModelOnly" class="alert error"></div>
 
-    <div class="test-top-card">
+    @* Header trình bày format, mode, số câu và timer; không gọi đây là đề thi chính thức. *@
+    <header class="card test-meta">
         <div>
-            <strong>Làm bài kiểm tra</strong>
-            <p>Tên bài: Ngữ pháp Cơ bản</p>
-            <p>Cấp độ: Cấp độ 1</p>
-            <p>Số câu: 20 câu</p>
-            <p>Thời gian: 25 phút</p>
+            <span class="badge">@(Model.Format == TestFormat.ToeicStyle ? "TOEIC-style" : "IELTS-style") · @Model.Mode · Không phải bài thi chính thức</span>
+            <h1 style="margin:10px 0 5px">@Model.Title</h1>
+            <p class="muted">@Model.TopicName · @Model.Level · @Model.Questions.Count câu · @Model.DurationMinutes phút</p>
         </div>
-
-        <div class="test-time-box">
+        <div class="timer">
             <span>Thời gian còn lại</span>
-            <strong>22:15</strong>
+            <strong id="test-timer">--:--</strong>
         </div>
+    </header>
+
+    @* Thanh thông tin cập nhật theo group đang xem và tổng câu đã trả lời. *@
+    <div class="page-heading" style="margin:14px 0 7px">
+        <strong id="group-progress-label">Nhóm 1 / @Model.Groups.Count</strong>
+        <span id="question-part-label"></span>
+        <span id="answered-label">Đã trả lời 0 / @Model.Questions.Count</span>
     </div>
 
-    <div class="test-progress-label">
-        <span>Câu 5 / 20</span>
-        <strong>25%</strong>
+    @* Thanh tiến độ này chỉ phục vụ điều hướng, không tham gia tính điểm. *@
+    <div class="progress-track">
+        <span id="question-progress-bar" style="width:@(Model.Groups.Count > 0 ? 100m / Model.Groups.Count : 0)%"></span>
     </div>
 
-    <div class="progress-bar test-progress">
-        <div style="width:25%"></div>
-    </div>
+    @* Form chỉ gửi QuestionId, AnswerId hoặc TextAnswer cùng anti-forgery token. *@
+    <form id="test-form" asp-action="Submit" asp-route-id="@Model.TestId" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="TestId" value="@Model.TestId" />
 
-    <article class="ui-card question-card">
-        <h2>Câu 5. Chọn đáp án đúng.</h2>
-        <p>Đây là nội dung câu hỏi hiển thị ở đây.</p>
-    </article>
+        @* Mỗi slide là một group để audio hoặc passage chung chỉ render đúng một lần. *@
+        @for (var groupIndex = 0; groupIndex < Model.Groups.Count; groupIndex++)
+        {
+            var group = Model.Groups[groupIndex];
 
-    <div class="test-answer-list">
-        <label class="test-answer-option">
-            <input type="radio" name="answer" />
-            <span>A. Đáp án A</span>
-        </label>
+            <article class="card question-slide @(groupIndex == 0 ? "active" : "")"
+                     data-group-index="@groupIndex"
+                     data-section="@group.SectionName"
+                     data-part="@group.PartNumber">
 
-        <label class="test-answer-option selected">
-            <input type="radio" name="answer" checked />
-            <span>B. Đáp án B</span>
-        </label>
+                @* Group header giúp nhận biết Section/Part và mã recording/passage. *@
+                <div class="group-heading">
+                    <span class="badge">@group.SectionName · @(Model.Format == TestFormat.ToeicStyle ? "Part" : "Part/Passage") @group.PartNumber</span>
+                    @if (!string.IsNullOrWhiteSpace(group.GroupCode))
+                    {
+                        <span class="muted">@group.GroupCode</span>
+                    }
+                </div>
 
-        <label class="test-answer-option">
-            <input type="radio" name="answer" />
-            <span>C. Đáp án C</span>
-        </label>
+                @* Passage/email/notice của group được render một lần ở vùng riêng. *@
+                @if (!string.IsNullOrWhiteSpace(group.ContextText))
+                {
+                    <section class="context-box">
+                        <strong>Nội dung chung</strong>
+                        <p>@group.ContextText</p>
+                    </section>
+                }
 
-        <label class="test-answer-option">
-            <input type="radio" name="answer" />
-            <span>D. Đáp án D</span>
-        </label>
-    </div>
+                @* Ảnh dùng chung của group, đặc biệt TOEIC Part 1. *@
+                @if (!string.IsNullOrWhiteSpace(group.ImageUrl))
+                {
+                    <img src="@group.ImageUrl" alt="Hình minh họa câu hỏi" class="topic-image" style="margin-top:12px" />
+                }
 
-    <div class="question-navigation">
-        <button type="button" class="ui-secondary-button">Câu trước</button>
+                @* Practice có controls; FullMock dùng nút phát một lần và không có thanh tua. *@
+                @if (!string.IsNullOrWhiteSpace(group.AudioUrl))
+                {
+                    if (Model.Mode == TestMode.Practice)
+                    {
+                        <audio controls preload="none" src="@group.AudioUrl" style="width:100%;margin:12px 0"></audio>
+                    }
+                    else
+                    {
+                        <div class="fullmock-audio">
+                            <audio preload="none" src="@group.AudioUrl"></audio>
+                            <button type="button" class="button play-once-audio">Phát recording một lần</button>
+                            <span class="muted audio-message">Recording chưa phát.</span>
+                        </div>
+                    }
+                }
 
-        <div class="question-number-list">
-            <button type="button">1</button>
-            <button type="button">2</button>
-            <button type="button">3</button>
-            <button type="button">4</button>
-            <button type="button" class="active">5</button>
-            <button type="button">6</button>
-            <span>...</span>
-            <button type="button">20</button>
-        </div>
+                @* Các câu cùng group nằm dưới cùng media/passage. *@
+                @foreach (var question in group.Questions)
+                {
+                    var currentAnswerIndex = answerIndex++;
+                    var currentQuestionNumber = ++questionNumber;
+                    var isTextQuestion = question.QuestionType == QuestionType.FillBlank || question.QuestionType == QuestionType.ListeningFill;
 
-        <button type="button" class="ui-secondary-button">Câu tiếp theo</button>
-    </div>
+                    <section class="question-block" data-question-id="@question.Id">
+                        <input type="hidden" name="Answers[@currentAnswerIndex].QuestionId" value="@question.Id" />
 
-    <a asp-controller="User"
-       asp-action="TestResult"
-       class="ui-primary-button submit-test-button">
-        Nộp bài
-    </a>
+                        @* Instruction và word-limit luôn xuất hiện trước input để người học biết quy tắc. *@
+                        @if (!string.IsNullOrWhiteSpace(question.Instruction))
+                        {
+                            <p class="instruction">@question.Instruction</p>
+                        }
 
+                        <h2>Câu @currentQuestionNumber. @question.Content</h2>
+
+                        @* Completion chỉ gửi TextAnswer; AnswerId để trống. *@
+                        @if (isTextQuestion)
+                        {
+                            <div class="field">
+                                <label for="text-answer-@currentAnswerIndex">Câu trả lời @(question.MaxWords.HasValue ? $"(tối đa {question.MaxWords} từ)" : "")</label>
+                                <input id="text-answer-@currentAnswerIndex"
+                                       type="text"
+                                       name="Answers[@currentAnswerIndex].TextAnswer"
+                                       maxlength="200"
+                                       autocomplete="off" />
+                            </div>
+                        }
+                        else
+                        {
+                            @* Câu lựa chọn chỉ gửi AnswerId; ViewModel không có IsCorrect. *@
+                            <div class="answer-options">
+                                @foreach (var answer in question.Answers)
+                                {
+                                    <label class="answer-option">
+                                        <input type="radio" name="Answers[@currentAnswerIndex].AnswerId" value="@answer.Id" />
+                                        <span>@answer.Content</span>
+                                    </label>
+                                }
+                            </div>
+                        }
+                    </section>
+                }
+            </article>
+        }
+
+        @* Empty state chỉ xuất hiện nếu admin tạo đề Practice chưa có câu. *@
+        @if (Model.Groups.Count == 0)
+        {
+            <div class="card muted" style="margin-top:16px">Bài kiểm tra chưa có câu hỏi.</div>
+        }
+        else
+        {
+            @* Nút chuyển group thay vì lặp audio/passage theo từng câu. *@
+            <div class="question-nav">
+                <button type="button" id="previous-question" class="button secondary">← Nhóm trước</button>
+                <div class="question-dots">
+                    @for (var groupIndex = 0; groupIndex < Model.Groups.Count; groupIndex++)
+                    {
+                        <button type="button" class="question-dot @(groupIndex == 0 ? "active" : "")" data-question-target="@groupIndex">@(groupIndex + 1)</button>
+                    }
+                </div>
+                <button type="button" id="next-question" class="button secondary">Nhóm tiếp →</button>
+            </div>
+
+            @* Server vẫn là nguồn duy nhất tính CorrectCount và Score. *@
+            <button type="submit" class="button" style="width:100%">Nộp bài và chấm ở server</button>
+        }
+    </form>
 </section>
+
+@section Scripts {
+<script>
+    // Bao toàn bộ logic trong một scope riêng để không tạo biến global.
+    (function () {
+        // Lấy danh sách group slide đã được Razor render.
+        const slides = Array.from(document.querySelectorAll(".question-slide"));
+
+        // Lấy các nút số dùng để chuyển group.
+        const dots = Array.from(document.querySelectorAll(".question-dot"));
+
+        // Không khởi tạo điều hướng/timer khi đề chưa có câu.
+        if (!slides.length) return;
+
+        // Group đầu tiên được chọn mặc định.
+        let current = 0;
+
+        // Lấy các thành phần giao diện cần cập nhật.
+        const previous = document.getElementById("previous-question");
+        const next = document.getElementById("next-question");
+        const groupLabel = document.getElementById("group-progress-label");
+        const partLabel = document.getElementById("question-part-label");
+        const answeredLabel = document.getElementById("answered-label");
+        const bar = document.getElementById("question-progress-bar");
+        const form = document.getElementById("test-form");
+
+        // Hiển thị đúng một group và cập nhật nhãn Section/Part.
+        function show(index) {
+            // Ép index luôn nằm trong khoảng group hợp lệ.
+            current = Math.max(0, Math.min(index, slides.length - 1));
+
+            // Chỉ slide hiện tại nhận class active.
+            slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === current));
+
+            // Đồng bộ trạng thái active của nút số.
+            dots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === current));
+
+            // Vô hiệu hóa nút lùi ở group đầu.
+            previous.disabled = current === 0;
+
+            // Vô hiệu hóa nút tiến ở group cuối.
+            next.disabled = current === slides.length - 1;
+
+            // Hiển thị vị trí group hiện tại.
+            groupLabel.textContent = `Nhóm ${current + 1} / ${slides.length}`;
+
+            // Hiển thị Section và Part/Passage hiện tại.
+            partLabel.textContent = `${slides[current].dataset.section} · Part/Passage ${slides[current].dataset.part}`;
+
+            // Thanh tiến độ dựa trên group, không dựa vào điểm.
+            bar.style.width = `${((current + 1) / slides.length) * 100}%`;
+        }
+
+        // Đếm số Question có radio được chọn hoặc input text không rỗng.
+        function updateAnsweredCount() {
+            // Mỗi question-block tương ứng đúng một câu hỏi.
+            const questionBlocks = Array.from(document.querySelectorAll(".question-block"));
+
+            // Một block được trả lời nếu có radio checked hoặc text sau trim.
+            const answered = questionBlocks.filter(block => {
+                const checked = block.querySelector('input[type="radio"]:checked');
+                const text = block.querySelector('input[type="text"]');
+                return Boolean(checked) || Boolean(text && text.value.trim());
+            }).length;
+
+            // Cập nhật nhãn tổng quan ở header.
+            answeredLabel.textContent = `Đã trả lời ${answered} / ${questionBlocks.length}`;
+        }
+
+        // Nút trước giảm index một đơn vị.
+        previous.addEventListener("click", () => show(current - 1));
+
+        // Nút tiếp tăng index một đơn vị.
+        next.addEventListener("click", () => show(current + 1));
+
+        // Mỗi nút số mở group tương ứng từ data attribute.
+        dots.forEach(dot => dot.addEventListener("click", () => show(Number(dot.dataset.questionTarget))));
+
+        // Mọi thay đổi đáp án đều cập nhật số câu đã trả lời.
+        form.addEventListener("input", updateAnsweredCount);
+        form.addEventListener("change", updateAnsweredCount);
+
+        // FullMock chỉ cho nút phát recording được dùng một lần.
+        document.querySelectorAll(".play-once-audio").forEach(button => {
+            // Sự kiện chỉ gắn vào audio FullMock, Practice vẫn dùng controls chuẩn.
+            button.addEventListener("click", async function () {
+                // Audio nằm cùng container với nút.
+                const container = button.closest(".fullmock-audio");
+
+                // Lấy audio và dòng trạng thái trong đúng group.
+                const audio = container.querySelector("audio");
+                const message = container.querySelector(".audio-message");
+
+                // Khóa nút ngay trước khi phát để tránh bấm lặp.
+                button.disabled = true;
+
+                // Báo trạng thái cho người học.
+                message.textContent = "Recording đang phát.";
+
+                try {
+                    // Trình duyệt phát URL do admin cấu hình.
+                    await audio.play();
+                } catch (error) {
+                    // Nếu phát lỗi, mở lại nút để người học có thể thử lại.
+                    button.disabled = false;
+                    message.textContent = "Không thể phát recording. Vui lòng thử lại.";
+                }
+
+                // Khi audio kết thúc, nút vẫn bị khóa ở FullMock.
+                audio.addEventListener("ended", () => { message.textContent = "Recording đã phát xong."; }, { once: true });
+            });
+        });
+
+        // Số giây bắt đầu được render từ DurationMinutes của server.
+        let seconds = @Model.DurationMinutes * 60;
+
+        // Lấy vùng hiển thị đồng hồ.
+        const timer = document.getElementById("test-timer");
+
+        // Render đồng hồ mỗi giây và tự submit khi hết giờ.
+        function renderTimer() {
+            // Tính số phút còn lại.
+            const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
+
+            // Tính số giây lẻ còn lại.
+            const remainingSeconds = (seconds % 60).toString().padStart(2, "0");
+
+            // Cập nhật chuỗi mm:ss.
+            timer.textContent = `${minutes}:${remainingSeconds}`;
+
+            // Hết giờ thì gửi những đáp án hiện có về server.
+            if (seconds <= 0) {
+                form.requestSubmit();
+                return;
+            }
+
+            // Giảm một giây trước vòng render kế tiếp.
+            seconds--;
+
+            // Hẹn lần cập nhật sau một giây.
+            window.setTimeout(renderTimer, 1000);
+        }
+
+        // Khởi tạo group đầu tiên.
+        show(0);
+
+        // Khởi tạo bộ đếm câu đã trả lời.
+        updateAnsweredCount();
+
+        // Bắt đầu countdown.
+        renderTimer();
+    })();
+</script>
+}

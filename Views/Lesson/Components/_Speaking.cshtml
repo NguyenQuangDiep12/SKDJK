@@ -1,127 +1,24 @@
-﻿<section class="lesson-module">
-    <div class="lesson-module-heading">
-        <div>
-            <h1>Luyện nói</h1>
-            <p>Thực hành phát âm và hội thoại</p>
-        </div>
-
-        <span class="lesson-counter">Bài 6 / 10</span>
-    </div>
-
-    <div class="lesson-two-column speaking-layout">
-
-        <div class="lesson-column">
-
-            <article class="lesson-ui-card">
-                <div class="lesson-section-title">
-                    <span class="section-number">🔊</span>
-                    <strong>Câu để luyện nói</strong>
-                </div>
-
-                <div class="speaking-sentence">
-                    Where are you from?
-                </div>
-
-                <button type="button"
-                        class="speak-standard-button">
-                    🔊 Nghe phát âm chuẩn
-                </button>
-            </article>
-
-            <article class="lesson-ui-card">
-
-                <h3>Ghi âm và phát âm lại</h3>
-
-                <div class="record-controls">
-                    <button type="button" class="record-button">
-                        🎙
-                    </button>
-
-                    <button type="button" class="stop-button">
-                        ■
-                    </button>
-                </div>
-
-                <div class="record-labels">
-                    <span>Ghi âm</span>
-                    <span>Dừng ghi âm</span>
-                </div>
-
-                <div class="audio-player recorded-player">
-                    <button type="button" class="audio-play-button">▶</button>
-
-                    <div class="audio-track">
-                        <div class="audio-track-fill recording-progress"></div>
+@model VocabularyLearningViewModel
+<section>
+    <div class="page-heading"><div><h2 style="margin:0">Luyện nói</h2><p>Nghe audio mẫu của từng từ rồi tự luyện phát âm theo.</p></div></div>
+    @if (Model.Items.Count == 0)
+    {
+        <div class="card muted">Bài học chưa có từ để luyện phát âm.</div>
+    }
+    else
+    {
+        <div class="grid grid-2">
+            @foreach (var item in Model.Items)
+            {
+                <article class="card">
+                    <div class="page-heading" style="margin:0">
+                        <div><h3 style="margin:0">@item.Word</h3><p class="muted pronunciation-text">@item.Pronunciation · @item.Meaning</p></div>
+                        <button type="button" class="button pronounce-button" data-word="@item.Word">🔊 Nghe mẫu</button>
                     </div>
-
-                    <span>0:12</span>
-                </div>
-
-            </article>
-
+                    <p>@item.Example</p>
+                    <p class="audio-status"></p>
+                </article>
+            }
         </div>
-
-
-        <div class="lesson-column">
-
-            <article class="lesson-ui-card pronunciation-result">
-
-                <h3>Kết quả phát âm</h3>
-
-                <div class="pronunciation-summary">
-
-                    <div class="score-circle">
-                        <strong>85</strong>
-                        <span>/100</span>
-                    </div>
-
-                    <div class="score-metrics">
-
-                        <div class="metric-row">
-                            <span>Độ chính xác</span>
-                            <div class="metric-track">
-                                <div style="width: 85%"></div>
-                            </div>
-                            <strong>85%</strong>
-                        </div>
-
-                        <div class="metric-row">
-                            <span>Tốc độ</span>
-                            <div class="metric-track">
-                                <div style="width: 80%"></div>
-                            </div>
-                            <strong>80%</strong>
-                        </div>
-
-                        <div class="metric-row">
-                            <span>Ngữ điệu</span>
-                            <div class="metric-track">
-                                <div style="width: 90%"></div>
-                            </div>
-                            <strong>90%</strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="feedback-box">
-                    <strong>Nhận xét</strong>
-                    <p>Phát âm tốt, cần cải thiện thêm một số âm cuối.</p>
-                </div>
-
-                <div class="wave-box">
-                    〰〰〰〰〰
-                </div>
-
-                <button type="button"
-                        class="ui-primary-button full-width">
-                    Chấm điểm chi tiết
-                </button>
-
-            </article>
-
-        </div>
-
-    </div>
+    }
 </section>

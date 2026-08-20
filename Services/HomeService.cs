@@ -1,117 +1,94 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SKDJK.Data;
 using SKDJK.Dtos;
-using SKDJK.Models;
 using SKDJK.Models.commons;
+using SKDJK.Models.enums;
 using SKDJK.Services.Interfaces;
 
-namespace SKDJK.Services;
-
-public class HomeService : IHomeService
+namespace SKDJK.Services
 {
-    private readonly ApplicationDbContext _dbContext;
-    public HomeService(ApplicationDbContext dbContext)
+    // Tổng hợp dashboard người học bằng các truy vấn đọc đơn giản, không hard-code số liệu.
+    public sealed class HomeService : IHomeService
     {
-        _dbContext = dbContext;
-    }
-    public async Task<Result<HomeDto>> GetAsync(int? userId, CancellationToken cancellationToken = default)
-    {
-        if(userId == null || userId <= 0)
+        private readonly ApplicationDbContext _dbContext;
+
+        public HomeService(ApplicationDbContext dbContext)
         {
-            return Result<HomeDto>.Failure(new Error("Auth.LoginUser", "Nguoi dung chua dang nhap tai khoan"));
+            _dbContext = dbContext;
         }
 
-        // kiem tra nguoi dung ton tai
-        var userExists = await _dbContext
-            .Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-
-        if(userExists == null)
+        public async Task<Result<HomeDto>> GetAsync(int? userId, CancellationToken cancellationToken = default)
         {
-            return Result<HomeDto>.Failure(new Error("Auth.EmailNotExist", "Tai khoan nguoi dung khong ton tai!"));
+            if (!userId.HasValue || userId.Value <= 0)
+            {
+                return Result<HomeDto>.Failure(new Error("Auth.LoginUser", "Người dùng chưa đăng nhập."));
+            }
+
+            bool userExists = await _dbContext.Users.AsNoTracking().AnyAsync(x => x.Id == userId.Value, cancellationToken);
+            if (!userExists)
+            {
+                return Result<HomeDto>.Failure(new Error("User.NotFound", "Tài khoản người dùng không tồn tại."));
+            }
+
+            IQueryable<Models.LearningProgress> startedProgress = _dbContext.LearningProgress
+                .AsNoTracking()
+                .Where(x => x.UserId == userId.Value && x.Status != LearningStatus.NOTSTARTED);
+
+            int learnedTopicCount = await startedProgress
+                .Select(x => x.Lesson.TopicId)
+                .Distinct()
+                .CountAsync(cancellationToken);
+
+            int completedTestCount = await _dbContext.TestResults
+                .AsNoTracking()
+                .CountAsync(x => x.UserId == userId.Value && x.SubmittedAt != null, cancellationToken);
+
+            int totalLessonCount = await _dbContext.Lessons.AsNoTracking().CountAsync(cancellationToken);
+            int completedLessonCount = await _dbContext.LearningProgress
+                .AsNoTracking()
+                .CountAsync(x => x.UserId == userId.Value && x.Status == LearningStatus.COMPLETED, cancellationToken);
+            decimal overallProgress = totalLessonCount == 0
+                ? 0
+                : Math.Round(completedLessonCount * 100m / totalLessonCount, 0);
+
+            ContinueLearningDto? continueLearning = await startedProgress
+                .Where(x => x.Status == LearningStatus.INPROGRESS && x.CompletionPercent < 100)
+                .OrderByDescending(x => x.LastStudyAt)
+                .Select(x => new ContinueLearningDto
+                {
+                    LessonId = x.LessonId,
+                    LessonTitle = x.Lesson.Title,
+                    TopicId = x.Lesson.TopicId,
+                    TopicName = x.Lesson.Topic.Name,
+                    CompletionPercent = x.CompletionPercent
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            IQueryable<int> learnedTopicIds = startedProgress.Select(x => x.Lesson.TopicId).Distinct();
+            List<SuggestedTopicDto> suggestedTopics = await _dbContext.Topics
+                .AsNoTracking()
+                .Where(x => !learnedTopicIds.Contains(x.Id))
+                .OrderBy(x => x.Id)
+                .Take(4)
+                .Select(x => new SuggestedTopicDto
+                {
+                    TopicId = x.Id,
+                    Name = x.Name,
+                    Level = x.Level,
+                    Description = x.Description,
+                    ImageUrl = x.ImageUrl
+                })
+                .ToListAsync(cancellationToken);
+
+            HomeDto dto = new()
+            {
+                LearnedTopicCount = learnedTopicCount,
+                CompletedTestCount = completedTestCount,
+                OverallProgress = overallProgress,
+                ContinueLearning = continueLearning,
+                SuggestedTopics = suggestedTopics
+            };
+            return Result<HomeDto>.Success(dto);
         }
-
-        // query nhung bai hoc user da bat dau
-        var userProgress = _dbContext
-           .LearningProgress
-           .AsNoTracking()
-           .Where(lp => lp.UserId == userId &&
-                  lp.Status != Models.enums.LearningStatus.NOTSTARTED);
-
-
-        // 1. Query so chu de da hoc
-        var learningTopicCount = await userProgress
-            .Select(l => l.Lesson.Id)
-            .Distinct()
-            .ToListAsync(cancellationToken);
-
-        // 2. So bai kiem tra da lam
-        var completedTestCount = await _dbContext
-            .TestResults
-            .AsNoTracking()
-            .Where(tr => tr.UserId == userId &&
-                   tr.SubmittedAt != null)
-            .Select(tr => tr.Id)
-            .Distinct()
-            .ToListAsync(cancellationToken);
-
-        // 3. Tien do hoc tap tong the
-        var overallProgress = await userProgress
-            .Select(lp => (decimal?)lp.CompletionPercent)
-            .AverageAsync(cancellationToken) ?? 0m;
-
-        overallProgress = Math.Round(overallProgress, 0);
-
-        // 4. Bai hoc dang hoc gan nhat
-        var continueLearning = await userProgress
-            .Where(lp => lp.Status == Models.enums.LearningStatus.INPROGRESS &&
-                   lp.CompletionPercent < 100)
-            .OrderByDescending(lp => lp.LastStudyAt)
-            .Select(lp => new ContinueLearningDto
-            {
-                LessonId = lp.LessonId,
-                CompletionPercent = lp.CompletionPercent,
-                LessonTitle = lp.Lesson.Title,
-                TopicId = lp.Lesson.TopicId,
-                TopicName = lp.Lesson.Topic.Name
-            })
-            .FirstOrDefaultAsync(cancellationToken);
-
-        // 5. nhung chu de da hoc gan nhat
-        var learningTopicIds = userProgress
-            .Select(lp => lp.Lesson.TopicId)
-            .Distinct();
-
-        // 6. Goi y 4 chu de chua hoc
-        var suggestedTopic = await _dbContext.Topics
-            .AsNoTracking()
-            .Where(t => !learningTopicIds.Contains(t.Id))
-            .OrderBy(t => t.Id)
-            .Take(4)
-            .Select(t => new SuggestedTopicDto
-            {
-                TopicId = t.Id,
-                Name = t.Name,
-                Level = t.Level,
-                Description = t.Description,
-                ImageUrl = t.ImageUrl
-            }).ToListAsync(cancellationToken);
-
-        var HomeDto = new HomeDto
-        {
-            LearnedTopicCount = learningTopicCount.Count,
-
-            CompletedTestCount = completedTestCount.Count,
-
-            OverallProgress = overallProgress,
-
-            ContinueLearning = continueLearning,
-
-            SuggestedTopics = suggestedTopic
-        };
-
-        return Result<HomeDto>
-            .Success(HomeDto);
     }
 }

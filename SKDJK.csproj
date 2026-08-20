@@ -37,9 +37,18 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Views\Admin\Test\" />
     <Folder Include="Views\Lesson\" />
     <Folder Include="Views\Progress\" />
     <Folder Include="Views\Test\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\SKDJK\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\SKDJK\.editorconfig" />
   </ItemGroup>
 
 </Project>

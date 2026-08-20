@@ -9,8 +9,9 @@ namespace SKDJK.Models
 
         public int QuestionId { get; set; }
         public Question Question { get; set; } = null!;
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         public bool IsCorrect { get; set; }
+        public ICollection<UserAnswer> UserAnswers { get; set; } = new List<UserAnswer>();
     }
 }

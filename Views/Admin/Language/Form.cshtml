@@ -1,0 +1,14 @@
+@model AdminLanguageFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa ngôn ngữ" : "Thêm ngôn ngữ";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Mã ngôn ngữ phải ngắn gọn và không trùng.</p></div></header>
+    <form asp-action="Save" method="post" class="card form-grid">
+        @Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="Name"></label><input asp-for="Name" /><span asp-validation-for="Name"></span></div>
+        <div class="field"><label asp-for="Code"></label><input asp-for="Code" /><span asp-validation-for="Code"></span></div>
+        <div class="field full"><label asp-for="Description"></label><textarea asp-for="Description" rows="4"></textarea></div>
+        <div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="Index" class="button secondary">Hủy</a><button type="submit" class="button">Lưu ngôn ngữ</button></div>
+    </form>
+</section>

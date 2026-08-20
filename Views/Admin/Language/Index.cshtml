@@ -1,0 +1,22 @@
+@model AdminLanguageListViewModel
+@{
+    ViewData["Title"] = "Quản lý ngôn ngữ";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>Quản lý ngôn ngữ</h1><p>Thêm, sửa và xóa ngôn ngữ khi chưa có chủ đề liên quan.</p></div><a asp-action="Create" class="button">+ Thêm ngôn ngữ</a></header>
+    <form method="get" class="card filters" style="margin-bottom:16px"><input name="search" value="@Model.Search" placeholder="Tìm tên hoặc mã..." /><button class="button" type="submit">Tìm</button></form>
+    <div class="card table-wrap"><table><thead><tr><th>#</th><th>Tên</th><th>Mã</th><th>Mô tả</th><th>Số chủ đề</th><th></th></tr></thead><tbody>
+        @if (Model.Items.Count == 0)
+        {
+            <tr><td colspan="6" class="muted">Chưa có ngôn ngữ.</td></tr>
+        }
+        else
+        {
+            @for (var i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+                <tr><td>@(i + 1)</td><td>@item.Name</td><td><span class="badge">@item.Code</span></td><td>@item.Description</td><td>@item.TopicCount</td><td class="actions"><a asp-action="Edit" asp-route-id="@item.Id" class="button secondary small">Sửa</a><form asp-action="Delete" asp-route-id="@item.Id" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa ngôn ngữ này?')">Xóa</button></form></td></tr>
+            }
+        }
+    </tbody></table></div>
+</section>

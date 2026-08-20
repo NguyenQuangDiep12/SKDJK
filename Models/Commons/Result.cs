@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace SKDJK.Models.commons
 {
@@ -54,7 +54,7 @@ namespace SKDJK.Models.commons
         {
             return new Result<T>(Value, true, Error.None);
         }
-        public static Result<T> Failure(Error error)
+        public new static Result<T> Failure(Error error)
         {
             return new Result<T>(default(T),false, error);
         }

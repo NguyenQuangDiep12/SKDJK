@@ -1,0 +1,353 @@
+@* Toàn bộ CSS được đặt trong Razor để không phụ thuộc file CSS ở wwwroot. *@
+<style>
+    /* Khai báo bảng màu nhỏ để giao diện chỉ dùng trắng, xám và một màu xanh tím. */
+    :root { --primary:#4f46e5; --ink:#1f2937; --muted:#6b7280; --line:#d1d5db; --canvas:#f3f4f6; --surface:#ffffff; --danger:#b91c1c; --success:#15803d; }
+
+    /* Tính cả padding và border trong kích thước phần tử. */
+    * { box-sizing:border-box; }
+
+    /* Đặt kiểu chữ và nền chung đơn giản cho toàn trang. */
+    body { margin:0; color:var(--ink); background:var(--canvas); font:14px Arial,Helvetica,sans-serif; }
+
+    /* Bỏ gạch chân mặc định nhưng vẫn giữ màu theo phần tử cha. */
+    a { color:inherit; text-decoration:none; }
+
+    /* Đồng bộ font của control với nội dung trang. */
+    button,input,select,textarea { font:inherit; }
+
+    /* Cho biết button có thể nhấn. */
+    button { cursor:pointer; }
+
+    /* Header là một hàng ngang có viền dưới như wireframe. */
+    .header { min-height:64px; display:flex; align-items:center; gap:20px; padding:10px 24px; background:var(--surface); border-bottom:1px solid var(--line); }
+
+    /* Nhóm logo và tên hệ thống nằm cùng hàng. */
+    .header-brand { min-width:270px; display:flex; align-items:center; gap:10px; font-weight:700; }
+
+    /* Logo chỉ là ô chữ đơn sắc để giữ giao diện tối giản. */
+    .brand-logo { width:40px; height:40px; display:grid; place-items:center; color:#fff; background:var(--primary); }
+
+    /* Ô tìm kiếm chiếm phần trống giữa header. */
+    .header-search { width:min(360px,40vw); margin-left:auto; display:flex; border:1px solid var(--line); background:#fff; }
+
+    /* Input tìm kiếm không lặp lại border của form. */
+    .header-search input { width:100%; padding:9px; border:0; outline:0; }
+
+    /* Tài khoản và nút đăng xuất nằm cạnh nhau. */
+    .header-user { margin-left:auto; display:flex; align-items:center; gap:10px; }
+
+    /* Layout chính chia sidebar và nội dung. */
+    .app-shell { min-height:calc(100vh - 64px); display:grid; grid-template-columns:220px minmax(0,1fr); }
+
+    /* Sidebar dùng nền trắng và một đường phân cách. */
+    .sidebar,.admin-sidebar { padding:18px 14px; background:#fff; border-right:1px solid var(--line); }
+
+    /* Menu xếp dọc, cách nhau ít để dễ đọc. */
+    .sidebar-menu,.admin-menu { display:grid; gap:8px; }
+
+    /* Mỗi menu là một ô viền vuông nhẹ. */
+    .sidebar-item,.admin-menu-item { display:flex; align-items:center; gap:9px; padding:11px 12px; border:1px solid var(--line); }
+
+    /* Menu hiện tại dùng duy nhất màu nhấn. */
+    .sidebar-item.active,.admin-menu-item.active { color:#fff; border-color:var(--primary); background:var(--primary); }
+
+    /* Khối thông tin admin được căn giữa phía trên menu. */
+    .admin-profile { margin-bottom:20px; display:grid; place-items:center; gap:6px; }
+
+    /* Avatar admin là ô đơn giản, không dùng ảnh trang trí. */
+    .admin-avatar { width:42px; height:42px; border:1px solid var(--line); background:var(--canvas); }
+
+    /* Nội dung chính có khoảng đệm vừa đủ. */
+    .main-content { min-width:0; padding:24px; }
+
+    /* Giới hạn chiều rộng để bảng và form không kéo quá dài. */
+    .page { max-width:1200px; margin:0 auto; }
+
+    /* Heading và toolbar căn hai phía giống wireframe. */
+    .page-heading,.page-toolbar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; }
+
+    /* Tiêu đề không có margin thừa. */
+    .page-heading h1,.page-toolbar h1 { margin:0 0 5px; font-size:24px; }
+
+    /* Văn bản phụ dùng màu xám. */
+    .page-heading p,.muted { margin:0; color:var(--muted); }
+
+    /* Card chỉ có nền trắng và viền, không đổ bóng hoặc bo tròn cầu kỳ. */
+    .card { padding:18px; border:1px solid var(--line); background:#fff; }
+
+    /* Grid dùng chung cho các màn thống kê và danh sách card. */
+    .grid { display:grid; gap:14px; }
+
+    /* Biến thể hai cột. */
+    .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+    /* Biến thể ba cột. */
+    .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+    /* Biến thể bốn cột. */
+    .grid-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+
+    /* Button chính dùng nền màu nhấn và viền vuông. */
+    .button,.primary-button { min-height:38px; padding:8px 14px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--primary); color:#fff; background:var(--primary); font-weight:700; }
+
+    /* Button phụ dùng nền trắng. */
+    .button.secondary { color:var(--ink); border-color:var(--line); background:#fff; }
+
+    /* Button xóa dùng chữ đỏ nhưng không tô nền mạnh. */
+    .button.danger { color:var(--danger); border-color:var(--danger); background:#fff; }
+
+    /* Button nhỏ dành cho thao tác trong bảng. */
+    .button.small { min-height:30px; padding:5px 9px; font-size:12px; }
+
+    /* Field xếp label và control theo chiều dọc. */
+    .field,.form-group { display:grid; gap:6px; }
+
+    /* Label được làm đậm để đọc form nhanh. */
+    .field label,.form-group label { font-weight:700; }
+
+    /* Mọi control dùng cùng kiểu viền đơn giản. */
+    .field input,.field select,.field textarea,.filters input,.filters select,.form-group input { width:100%; min-height:40px; padding:9px 10px; border:1px solid var(--line); color:var(--ink); background:#fff; }
+
+    /* Bộ lọc nằm trên một hàng và tự xuống dòng khi thiếu chỗ. */
+    .filters { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+
+    /* Ô tìm kiếm trong bộ lọc có chiều rộng dễ sử dụng. */
+    .filters input { min-width:210px; }
+
+    /* Form quản trị mặc định chia hai cột. */
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+
+    /* Field full chiếm hết hàng. */
+    .field.full { grid-column:1/-1; }
+
+    /* Hàng đáp án admin vẫn giữ cấu trúc gọn. */
+    .answer-row { grid-template-columns:1fr auto; align-items:end; }
+
+    /* Nội dung đáp án chiếm vùng chính. */
+    .answer-content { min-width:0; }
+
+    /* Checkbox đáp án đúng không bị kéo rộng. */
+    .answer-correct { width:auto!important; }
+
+    /* Thông báo validation dùng màu đỏ. */
+    .validation-summary-errors,.field-validation-error,.validation-error,.message-box,.alert.error { color:var(--danger); }
+
+    /* Alert chung dùng viền xanh. */
+    .alert { margin:0 0 14px; padding:10px 12px; border:1px solid var(--success); background:#fff; }
+
+    /* Alert lỗi đổi viền sang đỏ. */
+    .alert.error { border-color:var(--danger); }
+
+    /* Số thống kê được tách khỏi nhãn. */
+    .stat-card strong { display:block; margin-top:10px; font-size:27px; }
+
+    /* Track tiến độ là một thanh xám thẳng. */
+    .progress-track { height:7px; overflow:hidden; background:#e5e7eb; }
+
+    /* Phần hoàn thành dùng màu nhấn duy nhất. */
+    .progress-track>span { display:block; height:100%; background:var(--primary); }
+
+    /* Ảnh chủ đề có tỷ lệ cố định và nền dự phòng. */
+    .topic-image { width:100%; aspect-ratio:16/9; object-fit:cover; border:1px solid var(--line); background:var(--canvas); }
+
+    /* Tiêu đề card chủ đề có khoảng cách nhỏ. */
+    .topic-card h3 { margin:12px 0 6px; }
+
+    /* Mô tả card dùng màu phụ và chiều cao ổn định. */
+    .topic-card p { min-height:34px; color:var(--muted); }
+
+    /* Nút xem chi tiết phủ hết chiều rộng card. */
+    .topic-card .button { width:100%; }
+
+    /* Cho bảng cuộn ngang trên màn hình hẹp. */
+    .table-wrap { width:100%; overflow:auto; }
+
+    /* Bảng dùng border-collapse để đường kẻ liền nhau. */
+    table { width:100%; border-collapse:collapse; }
+
+    /* Ô bảng có đường kẻ dưới và căn nội dung lên trên. */
+    th,td { padding:10px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+
+    /* Header bảng có nền xám rất nhẹ. */
+    th { background:var(--canvas); font-size:12px; }
+
+    /* Nhóm thao tác giữ các nút cạnh nhau. */
+    .actions { display:flex; align-items:center; gap:6px; }
+
+    /* Form nằm trong nhóm thao tác không tạo margin. */
+    .actions form { margin:0; }
+
+    /* Badge chỉ dùng viền màu nhấn thay vì nhiều màu. */
+    .badge { display:inline-flex; padding:3px 7px; border:1px solid var(--primary); color:var(--primary); background:#fff; font-size:12px; font-weight:700; }
+
+    /* Badge thành công đổi sang màu xanh. */
+    .badge.success { color:var(--success); border-color:var(--success); }
+
+    /* Badge lỗi đổi sang màu đỏ. */
+    .badge.danger { color:var(--danger); border-color:var(--danger); }
+
+    /* Phân trang căn giữa. */
+    .pagination { margin-top:16px; display:flex; justify-content:center; gap:5px; }
+
+    /* Mỗi số trang là một ô viền vuông. */
+    .pagination a { min-width:32px; padding:7px; border:1px solid var(--line); text-align:center; background:#fff; }
+
+    /* Trang hiện tại dùng màu nhấn. */
+    .pagination a.active { color:#fff; border-color:var(--primary); background:var(--primary); }
+
+    /* Tab bài học nằm cùng hàng trong một khung đơn giản. */
+    .lesson-tabs { margin-bottom:14px; padding:6px; display:flex; gap:6px; overflow:auto; border:1px solid var(--line); background:#fff; }
+
+    /* Tab chưa chọn không có nền. */
+    .lesson-tab { padding:8px 14px; border:1px solid transparent; color:var(--muted); background:#fff; font-weight:700; white-space:nowrap; }
+
+    /* Tab đang chọn dùng màu nhấn. */
+    .lesson-tab.active { color:#fff; border-color:var(--primary); background:var(--primary); }
+
+    /* Panel chưa chọn bị ẩn. */
+    .lesson-panel { display:none; }
+
+    /* Panel đang chọn được hiển thị. */
+    .lesson-panel.active { display:block; }
+
+    /* Thẻ từ vựng căn nội dung vào giữa. */
+    .vocab-word { min-height:220px; display:grid; place-items:center; align-content:center; text-align:center; background:#fff; }
+
+    /* Từ chính được hiển thị lớn. */
+    .vocab-word h2 { margin:5px; font-size:34px; }
+
+    /* Thanh thao tác bài học và kết quả căn hai phía. */
+    .vocab-actions { margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:9px; }
+
+    /* Khu trạng thái audio luôn chừa một dòng. */
+    .audio-status { min-height:20px; color:var(--muted); }
+
+    /* Danh sách lựa chọn xếp dọc. */
+    .answer-options { margin-top:12px; display:grid; gap:8px; }
+
+    /* Một lựa chọn dùng viền mảnh và không tô màu. */
+    .answer-option { padding:10px; display:flex; align-items:flex-start; gap:9px; border:1px solid var(--line); background:#fff; }
+
+    /* Màn làm bài có chiều rộng đọc nội dung phù hợp. */
+    .test-shell { max-width:900px; }
+
+    /* Metadata đề chia nội dung và timer. */
+    .test-meta { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; }
+
+    /* Timer có đường phân cách bên trái. */
+    .timer { min-width:120px; padding:12px; border-left:1px solid var(--line); text-align:center; }
+
+    /* Thời gian còn lại được nhấn mạnh. */
+    .timer strong { display:block; margin-top:4px; font-size:23px; }
+
+    /* Slide group mặc định bị ẩn. */
+    .question-slide { display:none; margin-top:14px; }
+
+    /* Chỉ group hiện tại được hiển thị. */
+    .question-slide.active { display:block; }
+
+    /* Header group sắp section và mã group trên cùng hàng. */
+    .group-heading { display:flex; justify-content:space-between; gap:10px; }
+
+    /* Passage chung có viền trái để tách khỏi câu hỏi. */
+    .context-box { margin:12px 0; padding:12px; border-left:3px solid var(--primary); background:var(--canvas); white-space:pre-line; }
+
+    /* Các câu trong cùng group được phân cách bằng đường kẻ. */
+    .question-block { padding:14px 0; border-top:1px solid var(--line); }
+
+    /* Câu đầu tiên vẫn có khoảng cách rõ với media chung. */
+    .question-block:first-of-type { margin-top:10px; }
+
+    /* Instruction hiển thị trước câu hỏi bằng chữ đậm. */
+    .instruction { color:var(--ink); font-weight:700; }
+
+    /* Nút audio FullMock và thông báo nằm cùng hàng. */
+    .fullmock-audio { margin:12px 0; display:flex; align-items:center; gap:10px; }
+
+    /* Điều hướng group căn đều hai phía. */
+    .question-nav { margin:14px 0; display:flex; align-items:center; justify-content:space-between; gap:9px; }
+
+    /* Các nút số group tự xuống dòng. */
+    .question-dots { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; }
+
+    /* Nút group là ô vuông nhỏ. */
+    .question-dot { width:31px; height:31px; border:1px solid var(--line); background:#fff; }
+
+    /* Group hiện tại dùng màu nhấn. */
+    .question-dot.active { color:#fff; border-color:var(--primary); background:var(--primary); }
+
+    /* Điểm tổng là hình tròn duy nhất cần thiết để giống wireframe kết quả. */
+    .result-score { width:125px; height:125px; display:grid; place-items:center; border:8px solid var(--success); border-radius:50%; font-size:27px; font-weight:800; }
+
+    /* Chi tiết câu sai có viền trái đỏ. */
+    .result-question { padding:11px; border-left:3px solid var(--danger); background:#fff; }
+
+    /* Chi tiết câu đúng đổi viền sang xanh. */
+    .result-question.correct { border-left-color:var(--success); }
+
+    /* Dashboard admin chia hai cột bằng nhau. */
+    .admin-two-column { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+
+    /* Tiêu đề card admin đặt tên và nút cùng hàng. */
+    .admin-card-header { margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:9px; }
+
+    /* H2 card admin dùng cỡ chữ vừa. */
+    .admin-card-header h2 { margin:0; font-size:18px; }
+
+    /* Trang auth căn form vào giữa màn hình. */
+    .auth-page { min-height:100vh; display:grid; place-items:center; padding:20px; background:var(--canvas); }
+
+    /* Container auth có chiều rộng cố định dễ đọc. */
+    .auth-container { width:min(420px,100%); }
+
+    /* Thương hiệu auth căn giữa. */
+    .auth-brand { margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:10px; text-align:center; }
+
+    /* Tiêu đề thương hiệu auth có cỡ chữ gọn. */
+    .auth-brand h1 { margin:0; font-size:20px; }
+
+    /* Logo auth dùng cùng màu với toàn hệ thống. */
+    .auth-logo { width:42px; height:42px; display:grid; place-items:center; color:#fff; background:var(--primary); font-weight:700; }
+
+    /* Card auth chỉ dùng border và nền trắng. */
+    .auth-card { padding:22px; border:1px solid var(--line); background:#fff; }
+
+    /* Tiêu đề auth bỏ khoảng thừa phía trên. */
+    .auth-card h2 { margin-top:0; }
+
+    /* Form auth xếp các field theo chiều dọc. */
+    .auth-form { display:grid; gap:14px; }
+
+    /* Password box cho input và nút hiện mật khẩu dùng chung một border. */
+    .password-box { display:flex; border:1px solid var(--line); }
+
+    /* Input password bỏ border riêng. */
+    .password-box input { border:0; }
+
+    /* Nút hiện mật khẩu có nền trắng và đường phân cách. */
+    .password-toggle { min-width:42px; border:0; border-left:1px solid var(--line); background:#fff; }
+
+    /* Hàng ghi nhớ đăng nhập giữ checkbox và nhãn cạnh nhau. */
+    .form-row,.checkbox-label { display:flex; align-items:center; gap:7px; }
+
+    /* Nút submit auth phủ hết card. */
+    .primary-button { width:100%; }
+
+    /* Liên kết chuyển Login/Register căn giữa. */
+    .auth-switch { text-align:center; }
+
+    /* Liên kết auth dùng màu nhấn. */
+    .auth-switch a { color:var(--primary); font-weight:700; }
+
+    /* Footer nhỏ và căn giữa. */
+    .footer { padding:14px; color:var(--muted); text-align:center; }
+
+    /* Màn hình trung bình giảm grid bốn cột và dashboard admin. */
+    @@media (max-width:980px) { .grid-4,.grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-two-column { grid-template-columns:1fr; } }
+
+    /* Màn hình nhỏ chuyển sidebar lên trên và mọi grid về một cột. */
+    @@media (max-width:760px) { .header { padding:10px 14px; } .header-brand { min-width:0; } .header-brand span:last-child,.header-search { display:none; } .app-shell { grid-template-columns:1fr; } .sidebar,.admin-sidebar { border-right:0; border-bottom:1px solid var(--line); } .sidebar-menu,.admin-menu { grid-template-columns:repeat(2,minmax(0,1fr)); } .main-content { padding:14px; } .grid-2,.grid-3,.grid-4,.form-grid { grid-template-columns:1fr; } .page-heading,.page-toolbar { align-items:flex-start; flex-direction:column; } .test-meta { grid-template-columns:1fr; } .timer { border-left:0; border-top:1px solid var(--line); } }
+
+    /* Điện thoại hẹp chuyển menu và điều hướng group sang chiều dọc. */
+    @@media (max-width:480px) { .sidebar-menu,.admin-menu { grid-template-columns:1fr; } .question-nav { align-items:stretch; flex-direction:column; } }
+</style>

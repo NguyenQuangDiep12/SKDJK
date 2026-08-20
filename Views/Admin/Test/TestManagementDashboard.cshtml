@@ -1,0 +1,11 @@
+@model AdminTestListViewModel
+@{
+    ViewData["Title"] = "Quản lý bài kiểm tra";
+}
+<section class="page"><header class="page-heading"><div><h1>Quản lý bài kiểm tra</h1><p>TOEIC-style/IELTS-style chỉ mô phỏng Listening và Reading.</p></div><a asp-action="Create" class="button">+ Thêm bài kiểm tra</a></header>
+    <form method="get" asp-action="TestManagementDashboard" class="card filters" style="margin-bottom:16px"><input name="search" value="@Model.Search" placeholder="Tìm bài kiểm tra..." /><select name="format"><option value="">Tất cả format</option><option value="ToeicStyle" selected="@(Model.Format==TestFormat.ToeicStyle)">TOEIC-style</option><option value="IeltsStyle" selected="@(Model.Format==TestFormat.IeltsStyle)">IELTS-style</option></select><select name="mode"><option value="">Tất cả mode</option><option value="Practice" selected="@(Model.Mode==TestMode.Practice)">Practice</option><option value="FullMock" selected="@(Model.Mode==TestMode.FullMock)">FullMock</option></select><button type="submit" class="button">Lọc</button></form>
+    <div class="card table-wrap"><table><thead><tr><th>#</th><th>Tên bài</th><th>Bài học</th><th>Format</th><th>Mode</th><th>Trạng thái</th><th>Thời gian</th><th>Số câu</th><th></th></tr></thead><tbody>
+        @if(Model.Items.Count==0){<tr><td colspan="9" class="muted">Chưa có bài kiểm tra.</td></tr>}
+        else{@for(var i=0;i<Model.Items.Count;i++){var item=Model.Items[i];<tr><td>@(i+1)</td><td>@item.Title</td><td>@item.LessonTitle</td><td><span class="badge">@(item.Format==TestFormat.ToeicStyle?"TOEIC-style":"IELTS-style")</span></td><td>@item.Mode</td><td>@(item.IsActive?"Đang mở":"Đã tắt")</td><td>@item.DurationMinutes phút</td><td>@item.QuestionCount</td><td class="actions"><a asp-action="Questions" asp-route-testId="@item.Id" class="button small">Câu hỏi</a><a asp-action="Edit" asp-route-id="@item.Id" class="button secondary small">Sửa</a><form asp-action="Delete" asp-route-id="@item.Id" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa bài kiểm tra này?')">Xóa</button></form></td></tr>}}
+    </tbody></table></div>
+</section>

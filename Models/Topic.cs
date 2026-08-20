@@ -8,10 +8,10 @@ namespace SKDJK.Models
         public int Id { get; set; }
         public int LanguageId { get; set; }
         public Language Language { get; set; } = null!;
-        public string Name { get; set; }
-        public string Level { get; set; }
-        public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
         public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     }
 }

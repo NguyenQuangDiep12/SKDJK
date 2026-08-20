@@ -15,8 +15,12 @@ namespace SKDJK.Data.Configurations
 
             builder.Property(x => x.Score)
                 .IsRequired()
-                .HasColumnType("decimal(3,2)");
+                .HasPrecision(5, 2);
             builder.Property(x => x.CorrectCount)
+                .IsRequired()
+                .HasColumnType("int")
+                .HasDefaultValue(0);
+            builder.Property(x => x.TotalQuestions)
                 .IsRequired()
                 .HasColumnType("int")
                 .HasDefaultValue(0);

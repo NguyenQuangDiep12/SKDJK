@@ -1,0 +1,13 @@
+@{
+    // Đánh dấu menu Admin theo controller hiện tại.
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<aside class="admin-sidebar">
+    <div class="admin-profile"><div class="admin-avatar"></div><strong>Admin</strong></div>
+    <nav class="admin-menu" aria-label="Điều hướng quản trị">
+        <a asp-controller="Language" asp-action="Index" class="admin-menu-item @(controller == "Language" ? "active" : "")">Ngôn ngữ</a>
+        <a asp-controller="Topic" asp-action="TopicManagementDashboard" class="admin-menu-item @(controller == "Topic" ? "active" : "")">Chủ đề / cấp độ</a>
+        <a asp-controller="Lesson" asp-action="LessonManagementDashboard" class="admin-menu-item @(controller == "Lesson" ? "active" : "")">Bài học / từ vựng</a>
+        <a asp-controller="Test" asp-action="TestManagementDashboard" class="admin-menu-item @(controller == "Test" ? "active" : "")">Bài kiểm tra / câu hỏi</a>
+    </nav>
+</aside>

@@ -1,0 +1,13 @@
+@model AdminLessonFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa bài học" : "Thêm bài học";
+}
+<section class="page"><header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Nội dung tổng quan được tái sử dụng cho tab Ngữ pháp.</p></div></header>
+    <form asp-action="Save" method="post" class="card form-grid">@Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="TopicId"></label><select asp-for="TopicId"><option value="">Chọn chủ đề</option>@foreach(var topic in Model.Topics){<option value="@topic.Id">@topic.Name</option>}</select><span asp-validation-for="TopicId"></span></div>
+        <div class="field"><label asp-for="Title"></label><input asp-for="Title" /><span asp-validation-for="Title"></span></div>
+        <div class="field full"><label asp-for="Description"></label><textarea asp-for="Description" rows="3"></textarea></div>
+        <div class="field full"><label asp-for="Content"></label><textarea asp-for="Content" rows="10" placeholder="Lý thuyết, cấu trúc và ví dụ..."></textarea><span asp-validation-for="Content"></span></div>
+        <div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="LessonManagementDashboard" class="button secondary">Hủy</a><button type="submit" class="button">Lưu bài học</button></div>
+    </form>
+</section>

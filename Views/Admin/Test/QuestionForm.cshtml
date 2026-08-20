@@ -1,0 +1,36 @@
+@model AdminQuestionFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa câu hỏi" : "Thêm câu hỏi";
+    while (Model.Answers.Count < 6) { Model.Answers.Add(new AdminAnswerInputViewModel()); }
+}
+<section class="page"><header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Listening cần AudioUrl; TOEIC-style Part 1 cần thêm ImageUrl.</p></div></header>
+    <form asp-action="SaveQuestion" method="post" class="card form-grid">@Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><input asp-for="TestId" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="QuestionType"></label><select asp-for="QuestionType" asp-items="Html.GetEnumSelectList<QuestionType>()" id="question-type"></select></div><div class="field"><label asp-for="SectionName"></label><select asp-for="SectionName"><option value="Listening">Listening</option><option value="Reading">Reading</option></select></div>
+        <div class="field"><label asp-for="PartNumber"></label><input asp-for="PartNumber" type="number" /></div><div class="field"><label asp-for="Order"></label><input asp-for="Order" type="number" /></div>
+        <div class="field full"><label asp-for="Content"></label><textarea asp-for="Content" rows="3"></textarea><span asp-validation-for="Content"></span></div><div class="field full"><label asp-for="ContextText"></label><textarea asp-for="ContextText" rows="4"></textarea></div>
+        <div class="field"><label asp-for="GroupCode"></label><input asp-for="GroupCode" /></div><div class="field" id="audio-field"><label asp-for="AudioUrl"></label><input asp-for="AudioUrl" /></div><div class="field full"><label asp-for="ImageUrl"></label><input asp-for="ImageUrl" /></div>
+        <div class="field"><label asp-for="Instruction"></label><input asp-for="Instruction" placeholder="NO MORE THAN TWO WORDS AND/OR A NUMBER." /></div><div class="field"><label asp-for="MaxWords"></label><input asp-for="MaxWords" type="number" min="1" max="10" /><span asp-validation-for="MaxWords"></span></div>
+        <div class="field full"><strong>Các lựa chọn / đáp án chấp nhận</strong><p class="muted">Đánh dấu đáp án đúng. Câu điền có thể có nhiều đáp án đúng.</p></div>
+        @for(var i=0;i<Model.Answers.Count;i++)
+        {
+            <div class="field answer-row"><label>Đáp án @(i+1)</label><input asp-for="Answers[i].Content" class="answer-content" /></div><div class="field"><label style="margin-top:25px"><input asp-for="Answers[i].IsCorrect" class="answer-correct" /> Đáp án đúng</label></div>
+        }
+        <div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="Questions" asp-route-testId="@Model.TestId" class="button secondary">Hủy</a><button type="submit" class="button">Lưu câu hỏi</button></div>
+    </form>
+</section>
+@section Scripts{
+<script>
+    // Thay đổi form tối thiểu theo QuestionType mà không thêm framework frontend.
+    (function(){
+        const type=document.getElementById("question-type");
+        const audio=document.getElementById("audio-field");
+        const contents=Array.from(document.querySelectorAll(".answer-content"));
+        function update(){
+            const value=Number(type.value);
+            audio.style.display=(value===3||value===4)?"grid":"none";
+            if(value===5){["TRUE","FALSE","NOT GIVEN"].forEach((text,i)=>contents[i].value=text);}
+            if(value===6){["YES","NO","NOT GIVEN"].forEach((text,i)=>contents[i].value=text);}
+        }
+        type.addEventListener("change",update);update();
+    })();
+</script>}

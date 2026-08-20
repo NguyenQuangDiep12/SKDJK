@@ -1,46 +1,28 @@
-﻿<header class="header">
-
-    <div class="header-brand">
-
-        <button class="menu-button"
-                id="menuButton"
-                type="button">
-            ☰
-        </button>
-
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="brand-link">
-
-            <div class="brand-logo">
-                A
-            </div>
-
-            <span>
-                Hệ thống học ngoại ngữ trực tuyến
-            </span>
-
-        </a>
-
-    </div>
-
-
-    <div class="header-search">
-
-        <input type="text"
-               placeholder="Tìm kiếm chủ đề, bài học..." />
-
-        <span>
-            ⌕
-        </span>
-
-    </div>
-
-
+@* Header bám wireframe: thương hiệu, tìm kiếm và tài khoản. *@
+<header class="header">
+    <a asp-controller="Home" asp-action="Index" class="header-brand">
+        <span class="brand-logo">SK</span>
+        <span>Hệ thống học ngoại ngữ trực tuyến</span>
+    </a>
+    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("ADMIN"))
+    {
+        <form asp-controller="Topic" asp-action="Index" method="get" class="header-search">
+            <input name="search" type="search" placeholder="Tìm kiếm chủ đề..." aria-label="Tìm kiếm chủ đề" />
+            <button type="submit" style="border:0;background:transparent">⌕</button>
+        </form>
+    }
     <div class="header-user">
-
-        <partial name="_UserInfo" />
-
+        <span style="font-weight:700">@(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Khách")</span>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="button secondary small">Đăng xuất</button>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Auth" asp-action="Login" class="button small">Đăng nhập</a>
+        }
     </div>
-
 </header>

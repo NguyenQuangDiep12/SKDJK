@@ -1,23 +1,12 @@
-﻿<aside class="sidebar" id="sidebar">
-    <nav class="sidebar-menu">
-        <a href="/" class="sidebar-item active">
-            <span>⌂</span>
-            <span>Trang chủ</span>
-        </a>
-
-        <a href="/Topics" class="sidebar-item">
-            <span>▦</span>
-            <span>Danh sách chủ đề</span>
-        </a>
-
-        <a href="/lesson" class="sidebar-item">
-            <span>▤</span>
-            <span>Bài học của tôi</span>
-        </a>
-
-        <a href="/test" class="sidebar-item">
-            <span>✓</span>
-            <span>Bài kiểm tra của tôi</span>
-        </a>
+@{
+    // Đánh dấu menu đang mở dựa trên controller hiện tại.
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<aside class="sidebar">
+    <nav class="sidebar-menu" aria-label="Điều hướng người học">
+        <a asp-controller="Home" asp-action="Index" class="sidebar-item @(controller == "Home" ? "active" : "")"><span>⌂</span><span>Trang chủ</span></a>
+        <a asp-controller="Topic" asp-action="Index" class="sidebar-item @(controller == "Topic" ? "active" : "")"><span>▦</span><span>Danh sách chủ đề</span></a>
+        <a asp-controller="Progress" asp-action="Index" class="sidebar-item @(controller == "Progress" ? "active" : "")"><span>▤</span><span>Tiến độ của tôi</span></a>
+        <a asp-controller="Test" asp-action="Index" class="sidebar-item @(controller == "Test" ? "active" : "")"><span>✓</span><span>Bài kiểm tra của tôi</span></a>
     </nav>
 </aside>

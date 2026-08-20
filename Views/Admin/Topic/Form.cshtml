@@ -1,0 +1,16 @@
+@model AdminTopicFormViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Sửa chủ đề" : "Thêm chủ đề";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>@ViewData["Title"]</h1><p>Dùng cấp độ dạng chuỗi hiện có, không tạo bảng Level mới.</p></div></header>
+    <form asp-action="Save" method="post" class="card form-grid">
+        @Html.AntiForgeryToken()<input asp-for="Id" type="hidden" /><div asp-validation-summary="ModelOnly" class="field full"></div>
+        <div class="field"><label asp-for="Name"></label><input asp-for="Name" /><span asp-validation-for="Name"></span></div>
+        <div class="field"><label asp-for="LanguageId"></label><select asp-for="LanguageId"><option value="">Chọn ngôn ngữ</option>@foreach(var language in Model.Languages){<option value="@language.Id">@language.Name</option>}</select><span asp-validation-for="LanguageId"></span></div>
+        <div class="field"><label asp-for="Level"></label><select asp-for="Level"><option value="">Chọn cấp độ</option><option value="Cơ bản">Cơ bản</option><option value="Trung cấp">Trung cấp</option><option value="Nâng cao">Nâng cao</option></select><span asp-validation-for="Level"></span></div>
+        <div class="field"><label asp-for="ImageUrl"></label><input asp-for="ImageUrl" placeholder="/images/... hoặc https://..." /></div>
+        <div class="field full"><label asp-for="Description"></label><textarea asp-for="Description" rows="4"></textarea></div>
+        <div class="field full" style="display:flex;justify-content:flex-end;gap:8px"><a asp-action="TopicManagementDashboard" class="button secondary">Hủy</a><button type="submit" class="button">Lưu chủ đề</button></div>
+    </form>
+</section>

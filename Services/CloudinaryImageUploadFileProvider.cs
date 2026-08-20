@@ -1,4 +1,4 @@
-﻿using CloudinaryDotNet;
+using CloudinaryDotNet;
 using SKDJK.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using CloudinaryDotNet.Actions;
@@ -31,7 +31,7 @@ namespace SKDJK.Services
                 return Result<string>.Failure(new Models.commons.Error("User.UploadFile", "Anh khong duoc tai len hoac vuot qua kich thuoc 5mb"));
             }
             var extension = Path.GetExtension(imagefile.FileName);
-            if(!_allowExtension.Contains(extension) || !_allowedContentTypes.Contains(extension))
+            if(!_allowExtension.Contains(extension) || !_allowedContentTypes.Contains(imagefile.ContentType))
             {
                 return Result<string>.Failure(new Models.commons.Error("User.UploadImage", $"Anh khong dung dinh dang cho phep{string.Join(",", _allowExtension)}"));
             }
@@ -67,7 +67,7 @@ namespace SKDJK.Services
                     return Result<string>.Failure(new Models.commons.Error("User.UploadImage", "tai anh len that bai"));
                 }
                 return Result<string>.Success(upload.SecureUrl.ToString());
-            }catch(Exception ex)
+            }catch(Exception)
             {
                 throw;
             }

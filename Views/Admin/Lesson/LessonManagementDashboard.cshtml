@@ -1,0 +1,20 @@
+@model AdminLessonPageViewModel
+@{
+    ViewData["Title"] = "Quản lý bài học / từ vựng";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>Quản lý bài học / từ vựng</h1><p>Chọn bài học bên trái để quản lý từ vựng bên phải.</p></div></header>
+    <div class="admin-two-column">
+        <section class="card"><div class="admin-card-header"><h2>Danh sách bài học</h2><a asp-action="Create" class="button small">+ Thêm</a></div><div class="table-wrap"><table><thead><tr><th>Bài học</th><th>Chủ đề</th><th></th></tr></thead><tbody>
+            @if(Model.Lessons.Count==0){<tr><td colspan="3" class="muted">Chưa có bài học.</td></tr>}
+            else{@foreach(var lesson in Model.Lessons){<tr><td><a asp-action="LessonManagementDashboard" asp-route-lessonId="@lesson.Id"><strong>@lesson.Title</strong></a></td><td>@lesson.TopicName</td><td class="actions"><a asp-action="Edit" asp-route-id="@lesson.Id" class="button secondary small">Sửa</a><form asp-action="Delete" asp-route-id="@lesson.Id" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa bài học này?')">Xóa</button></form></td></tr>}}
+        </tbody></table></div></section>
+        <section class="card"><div class="admin-card-header"><h2>Từ vựng: @(Model.SelectedLesson?.Title ?? "Chưa chọn")</h2>@if(Model.SelectedLesson is not null){<a asp-action="CreateVocabulary" asp-route-lessonId="@Model.SelectedLesson.Id" class="button small">+ Thêm</a>}</div>
+            @if(Model.SelectedLesson is null){<p class="muted">Chọn một bài học để quản lý từ vựng.</p>}
+            else{<div class="table-wrap"><table><thead><tr><th>Từ</th><th>Nghĩa</th><th>Phiên âm</th><th></th></tr></thead><tbody>
+                @if(Model.Vocabularies.Count==0){<tr><td colspan="4" class="muted">Chưa có từ vựng.</td></tr>}
+                else{@foreach(var vocabulary in Model.Vocabularies){<tr><td>@vocabulary.Word</td><td>@vocabulary.Meaning</td><td>@vocabulary.Pronunciation</td><td class="actions"><a asp-action="EditVocabulary" asp-route-id="@vocabulary.Id" asp-route-lessonId="@vocabulary.LessonId" class="button secondary small">Sửa</a><form asp-action="DeleteVocabulary" asp-route-id="@vocabulary.Id" asp-route-lessonId="@vocabulary.LessonId" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa từ vựng này?')">Xóa</button></form></td></tr>}}
+            </tbody></table></div>}
+        </section>
+    </div>
+</section>

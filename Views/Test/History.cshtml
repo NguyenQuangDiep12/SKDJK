@@ -1,0 +1,21 @@
+@model TestHistoryViewModel
+@{
+    ViewData["Title"] = "Lịch sử bài kiểm tra";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>Lịch sử bài kiểm tra</h1><p>Chỉ hiển thị kết quả thuộc tài khoản hiện tại.</p></div><a asp-action="Index" class="button secondary">Danh sách bài kiểm tra</a></header>
+    <div class="card table-wrap"><table><thead><tr><th>#</th><th>Bài kiểm tra</th><th>Format</th><th>Mode</th><th>Ngày nộp</th><th>Đúng/Tổng</th><th>Điểm SKDJK</th><th></th></tr></thead><tbody>
+        @if (Model.Items.Count == 0)
+        {
+            <tr><td colspan="8" class="muted">Bạn chưa làm bài kiểm tra nào.</td></tr>
+        }
+        else
+        {
+            @for (var i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+                <tr><td>@(i + 1)</td><td>@item.TestTitle<br /><span class="muted">@item.TopicName</span></td><td>@(item.Format == TestFormat.ToeicStyle ? "TOEIC-style" : "IELTS-style")</td><td>@item.Mode</td><td>@item.SubmittedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td><td>@item.CorrectCount/@item.TotalQuestions</td><td>@item.Score.ToString("0.##")%</td><td><a asp-action="Result" asp-route-id="@item.ResultId" class="button small">Xem kết quả</a></td></tr>
+            }
+        }
+    </tbody></table></div>
+</section>

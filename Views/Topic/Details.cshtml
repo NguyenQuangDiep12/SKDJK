@@ -1,54 +1,41 @@
-﻿@{
+@model TopicDetailsViewModel
+@{
     ViewData["Title"] = "Chi tiết chủ đề";
 }
-
-<section class="user-page topic-details-page">
-    <article class="topic-detail-card">
-        <div class="topic-detail-image">▧</div>
-
-        <div class="topic-detail-content">
-            <h1>Du lịch và đi biển</h1>
-
-            <p>
-                Chủ đề giúp bạn nắm vững từ vựng, ngữ pháp và kỹ năng giao tiếp
-                liên quan đến chủ đề du lịch.
-            </p>
-
-            <div class="topic-meta-grid">
-                <div>
-                    <span>Cấp độ:</span>
-                    <strong>Trung cấp</strong>
-                </div>
-
-                <div>
-                    <span>Ngôn ngữ:</span>
-                    <strong>Tiếng Anh</strong>
-                </div>
-            </div>
+<section class="page">
+    <article class="card grid grid-2" style="margin-bottom:16px;align-items:center">
+        <img class="topic-image" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/topic-travel.svg" : Model.ImageUrl)" alt="Minh họa @Model.Name" />
+        <div>
+            <h1>@Model.Name</h1>
+            <p class="muted">@Model.Description</p>
+            <div class="grid grid-2" style="margin-top:16px"><span class="badge">Cấp độ: @Model.Level</span><span class="badge">Ngôn ngữ: @Model.LanguageName</span></div>
         </div>
     </article>
 
-    <section class="ui-card lesson-list-card">
-        <h2>Danh sách bài học</h2>
-
-        <div class="lesson-list">
-            @for (var i = 1; i <= 5; i++)
-            {
-                <article class="lesson-list-item">
-                    <div class="lesson-list-icon">▧</div>
-
-                    <div class="lesson-list-info">
-                        <strong>Bài @i: Từ vựng và chủ đề du lịch</strong>
-                        <span>Cấp độ: trung cấp</span>
-                    </div>
-
-                    <a asp-controller="User"
-                       asp-action="StudyPage"
-                       class="ui-primary-button lesson-enter-button">
-                        Vào học
-                    </a>
-                </article>
-            }
-        </div>
+    <section class="card">
+        <h2 style="margin-top:0">Danh sách bài học</h2>
+        @if (Model.Lessons.Count == 0)
+        {
+            <p class="muted">Chủ đề chưa có bài học.</p>
+        }
+        else
+        {
+            <div class="grid">
+                @foreach (var lesson in Model.Lessons)
+                {
+                    var lessonWidth = $"{Math.Clamp(lesson.CompletionPercent, 0, 100):0}%";
+                    <article class="card" style="box-shadow:none">
+                        <div class="page-heading" style="margin:0">
+                            <div style="flex:1">
+                                <strong>@lesson.Title</strong>
+                                <p class="muted">@lesson.Description</p>
+                                <div class="progress-track" style="margin-top:9px"><span style="width:@lessonWidth"></span></div>
+                            </div>
+                            <a asp-controller="Lesson" asp-action="Index" asp-route-id="@lesson.Id" class="button">@(lesson.CompletionPercent > 0 ? "Tiếp tục" : "Vào học")</a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
     </section>
 </section>

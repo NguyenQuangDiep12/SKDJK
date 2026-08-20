@@ -1,0 +1,10 @@
+@model AdminQuestionListViewModel
+@{
+    ViewData["Title"] = "Quản lý câu hỏi";
+}
+<section class="page"><header class="page-heading"><div><h1>Câu hỏi: @Model.TestTitle</h1><p>@(Model.Format==TestFormat.ToeicStyle?"TOEIC-style":"IELTS-style") · @Model.Mode · sắp xếp theo Order.</p></div><div class="actions"><a asp-action="TestManagementDashboard" class="button secondary">Quay lại</a><a asp-action="CreateQuestion" asp-route-testId="@Model.TestId" class="button">+ Thêm câu hỏi</a></div></header>
+    <div class="card table-wrap"><table><thead><tr><th>Order</th><th>Nội dung</th><th>Loại</th><th>Section</th><th>Part</th><th>Đáp án</th><th></th></tr></thead><tbody>
+        @if(Model.Items.Count==0){<tr><td colspan="7" class="muted">Chưa có câu hỏi.</td></tr>}
+        else{@foreach(var item in Model.Items){<tr><td>@item.Order</td><td>@item.Content</td><td>@item.QuestionType</td><td>@item.SectionName</td><td>@item.PartNumber</td><td>@item.AnswerCount</td><td class="actions"><a asp-action="EditQuestion" asp-route-testId="@Model.TestId" asp-route-id="@item.Id" class="button secondary small">Sửa</a><form asp-action="DeleteQuestion" asp-route-id="@item.Id" asp-route-testId="@Model.TestId" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa câu hỏi này?')">Xóa</button></form></td></tr>}}
+    </tbody></table></div>
+</section>

@@ -1,0 +1,17 @@
+@model AdminTopicListViewModel
+@{
+    ViewData["Title"] = "Quản lý chủ đề";
+}
+<section class="page">
+    <header class="page-heading"><div><h1>Quản lý chủ đề / cấp độ</h1><p>Danh sách chủ đề theo ngôn ngữ và cấp độ hiện có.</p></div><a asp-action="Create" class="button">+ Thêm chủ đề</a></header>
+    <form method="get" asp-action="TopicManagementDashboard" class="card filters" style="margin-bottom:16px">
+        <input name="search" value="@Model.Search" placeholder="Tìm chủ đề..." />
+        <select name="languageId"><option value="">Tất cả ngôn ngữ</option>@foreach (var language in Model.Languages){<option value="@language.Id" selected="@(Model.LanguageId == language.Id)">@language.Name</option>}</select>
+        <select name="level"><option value="">Tất cả cấp độ</option><option value="Cơ bản" selected="@(Model.Level == "Cơ bản")">Cơ bản</option><option value="Trung cấp" selected="@(Model.Level == "Trung cấp")">Trung cấp</option><option value="Nâng cao" selected="@(Model.Level == "Nâng cao")">Nâng cao</option></select>
+        <button type="submit" class="button">Lọc</button>
+    </form>
+    <div class="card table-wrap"><table><thead><tr><th>#</th><th>Chủ đề</th><th>Ngôn ngữ</th><th>Cấp độ</th><th>Mô tả</th><th></th></tr></thead><tbody>
+        @if (Model.Items.Count == 0){<tr><td colspan="6" class="muted">Chưa có chủ đề.</td></tr>}
+        else{ @for (var i=0;i<Model.Items.Count;i++){var item=Model.Items[i];<tr><td>@(i+1)</td><td>@item.Name</td><td>@item.LanguageName</td><td><span class="badge">@item.Level</span></td><td>@item.Description</td><td class="actions"><a asp-action="Edit" asp-route-id="@item.Id" class="button secondary small">Sửa</a><form asp-action="Delete" asp-route-id="@item.Id" method="post">@Html.AntiForgeryToken()<button class="button danger small" onclick="return confirm('Xóa chủ đề này?')">Xóa</button></form></td></tr>}}
+    </tbody></table></div>
+</section>

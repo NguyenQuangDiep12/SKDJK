@@ -1,96 +1,15 @@
-﻿<section class="lesson-module">
-    <div class="lesson-module-heading">
-        <div>
-            <h1>Ngữ pháp</h1>
-            <p>Chủ đề: Thì hiện tại đơn</p>
-        </div>
-
-        <span class="lesson-counter">Bài 4 / 10</span>
-    </div>
-
-    <div class="lesson-two-column grammar-layout">
-
-        <div class="lesson-column">
-
-            <article class="lesson-ui-card">
-                <div class="lesson-section-title">
-                    <span class="section-number">1</span>
-                    <strong>Kiến thức trọng tâm</strong>
-                </div>
-
-                <div class="grammar-formula">
-                    <strong>S + V(s/es) + ...</strong>
-                </div>
-
-                <p class="grammar-description">
-                    Dùng để diễn tả thói quen, sự thật hiển nhiên hoặc hành động
-                    lặp lại thường xuyên.
-                </p>
-
-                <div class="grammar-example">
-                    <strong>Ví dụ</strong>
-                    <p>She goes to school every day.</p>
-                    <p>I study English in the evening.</p>
-                </div>
-            </article>
-
-            <article class="lesson-ui-card">
-                <div class="lesson-section-title">
-                    <span class="section-number">2</span>
-                    <strong>Ghi nhớ</strong>
-                </div>
-
-                <ul class="lesson-note-list">
-                    <li>He / She / It: động từ thêm s hoặc es.</li>
-                    <li>I / You / We / They: giữ nguyên động từ.</li>
-                    <li>Dùng do/does cho câu hỏi và phủ định.</li>
-                </ul>
-            </article>
-
-        </div>
-
-        <div class="lesson-column">
-
-            <article class="lesson-ui-card">
-                <div class="lesson-section-title">
-                    <span class="section-number">3</span>
-                    <strong>Luyện tập</strong>
-                </div>
-
-                <p class="lesson-question">
-                    She ___ English every morning.
-                </p>
-
-                <div class="answer-grid">
-                    <button type="button">A. study</button>
-                    <button type="button" class="selected-correct">B. studies</button>
-                    <button type="button">C. studying</button>
-                    <button type="button">D. studied</button>
-                </div>
-
-                <button type="button" class="ui-primary-button full-width">
-                    Kiểm tra đáp án
-                </button>
-            </article>
-
-            <article class="lesson-ui-card">
-                <div class="lesson-section-title">
-                    <span class="section-number">4</span>
-                    <strong>Sắp xếp câu</strong>
-                </div>
-
-                <div class="word-chip-list">
-                    <button type="button">every day</button>
-                    <button type="button">English</button>
-                    <button type="button">studies</button>
-                    <button type="button">He</button>
-                </div>
-
-                <div class="sentence-drop-zone">
-                    He studies English every day.
-                </div>
-            </article>
-
-        </div>
-    </div>
+@model GrammarLearningViewModel
+<section>
+    <div class="page-heading"><div><h2 style="margin:0">Ngữ pháp</h2><p>Lý thuyết của bài @Model.LessonTitle</p></div></div>
+    <article class="card">
+        <div class="badge">Lý thuyết · cấu trúc · ví dụ</div>
+        @if (string.IsNullOrWhiteSpace(Model.Content))
+        {
+            <p class="muted">Bài học chưa có nội dung ngữ pháp.</p>
+        }
+        else
+        {
+            <p style="white-space:pre-line;line-height:1.8;font-size:16px">@Model.Content</p>
+        }
+    </article>
 </section>

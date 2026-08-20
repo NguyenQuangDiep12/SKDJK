@@ -17,42 +17,65 @@ namespace SKDJK.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken ct)
         {
-            var userId = _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _homeService.GetAsync(Convert.ToInt32(userId), ct);
-
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                var guestViewModel = new HomeViewModel
+                    {
+                        IsAuthenticated = false,
+                        FullName = "Người học"
+                    };
+                return View(guestViewModel);
+            }
+            // Đã đăng nhập
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+            var result = await _homeService.GetAsync(userId, ct);
             if (!result.IsSuccess)
             {
                 ViewBag.ErrorMessage = result.Error.Message;
-                return View("Error");
+
+                return View(new HomeViewModel
+                    {
+                        IsAuthenticated = true,
+                        FullName =
+                            User.Identity?.Name
+                            ?? "Người học"
+                    }
+                );
             }
-
-            var viewModel = new HomeViewModel
-            {
-                IsAuthenticated = User.Identity?.IsAuthenticated == true,
-                FullName = User.Identity?.Name,
-                CompletedTestCount = result.Value.CompletedTestCount,
-                ContinueLesson = result.Value.ContinueLearning == null ? null : new ContinueLessonViewModel
+            var dto = result.Value;
+            var viewModel = new HomeViewModel{
+                IsAuthenticated = true,
+                FullName = User.Identity?.Name ?? "Người học",
+                CompletedTestCount = dto.CompletedTestCount,
+                LearnedTopicCount = dto.LearnedTopicCount,
+                OverallProgress = dto.OverallProgress,
+                ContinueLesson = dto.ContinueLearning == null ? null : new ContinueLessonViewModel
                 {
-                    LessonId = result.Value.ContinueLearning.LessonId,
-                    CompletionPercent = result.Value.ContinueLearning.CompletionPercent,
-                    LessonTitle = result.Value.ContinueLearning.LessonTitle,
-                    TopicName = result.Value.ContinueLearning.TopicName,
+                    LessonId = dto.ContinueLearning.LessonId,
+
+                    LessonTitle = dto.ContinueLearning.LessonTitle,
+
+                    TopicName = dto.ContinueLearning.TopicName,
+
+                    CompletionPercent = dto.ContinueLearning.CompletionPercent
                 },
-                LearnedTopicCount = result.Value.LearnedTopicCount,
-                OverallProgress = result.Value.OverallProgress,
-                SuggestedTopics = result.Value.SuggestedTopics.Select(x => new SuggestedTopicViewModel
-                {
-                    TopicId = x.TopicId,
-                    Name = x.Name,
-                    Description = x.Description,
-                    ImageUrl = x.ImageUrl,
-                    Level = x.Level,
-                }).ToList()
+                SuggestedTopics = dto.SuggestedTopics
+                    .Select(x =>
+                        new SuggestedTopicViewModel
+                        {
+                            TopicId = x.TopicId,
+                            Name = x.Name,
+                            Description = x.Description,
+                            ImageUrl = x.ImageUrl,
+                            Level = x.Level
+                        })
+                    .ToList()
             };
-
             return View(viewModel);
         }
-
-
     }
 }
