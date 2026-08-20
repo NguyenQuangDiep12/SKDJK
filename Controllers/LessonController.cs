@@ -17,6 +17,47 @@ namespace SKDJK.Controllers
             _lessonService = lessonService;
         }
 
+        // Trang Bài học của tôi chỉ lấy tiến độ của tài khoản đang đăng nhập.
+        [HttpGet]
+        public async Task<IActionResult> MyLessons(CancellationToken cancellationToken = default)
+        {
+            // UserId luôn lấy từ claim, không nhận từ query string để tránh xem dữ liệu người khác.
+            if (!User.TryGetUserId(out int userId))
+            {
+                return Unauthorized();
+            }
+
+            // Service trả DTO chứa duy nhất bài được học gần nhất.
+            var result = await _lessonService.GetMyLessonsAsync(userId, cancellationToken);
+
+            // Lỗi tài khoản được trả về HTTP 400 thay vì render dữ liệu không hợp lệ.
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Error.Message);
+            }
+
+            // Controller chuyển DTO sang ViewModel trước khi đưa dữ liệu cho Razor.
+            MyLessonPageViewModel model = new()
+            {
+                LatestLesson = result.Value.LatestLesson is null
+                    ? null
+                    : new MyLessonItemViewModel
+                {
+                    LessonId = result.Value.LatestLesson.LessonId,
+                    LessonTitle = result.Value.LatestLesson.LessonTitle,
+                    Description = result.Value.LatestLesson.Description,
+                    TopicName = result.Value.LatestLesson.TopicName,
+                    LanguageName = result.Value.LatestLesson.LanguageName,
+                    Status = result.Value.LatestLesson.Status,
+                    CompletionPercent = result.Value.LatestLesson.CompletionPercent,
+                    LastStudyAt = result.Value.LatestLesson.LastStudyAt
+                }
+            };
+
+            // Razor chịu trách nhiệm chọn trạng thái trống hoặc danh sách bài học.
+            return View(model);
+        }
+
         [HttpGet("lesson/{id:int}")]
         public async Task<IActionResult> Index(int id, CancellationToken cancellationToken = default)
         {

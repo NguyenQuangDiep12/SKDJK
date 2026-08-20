@@ -2,6 +2,27 @@ using SKDJK.Models.enums;
 
 namespace SKDJK.ViewModels
 {
+    // ViewModel trang Bài học của tôi chỉ hiển thị bài được học gần nhất.
+    public sealed class MyLessonPageViewModel
+    {
+        public MyLessonItemViewModel? LatestLesson { get; set; }
+        public bool HasLesson => LatestLesson is not null;
+    }
+
+    // ViewModel một dòng bài học dành riêng cho Razor View.
+    public sealed class MyLessonItemViewModel
+    {
+        public int LessonId { get; set; }
+        public string LessonTitle { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string TopicName { get; set; } = string.Empty;
+        public string LanguageName { get; set; } = string.Empty;
+        public LearningStatus Status { get; set; }
+        public decimal CompletionPercent { get; set; }
+        public DateTime? LastStudyAt { get; set; }
+        public bool IsCompleted => Status == LearningStatus.COMPLETED;
+    }
+
     // ViewModel cha ghép bốn tab nội dung theo đúng wireframe bài học.
     public sealed class LessonStudyViewModel
     {

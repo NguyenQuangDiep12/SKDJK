@@ -1,100 +1,142 @@
-# SKDJK - request kiểm thử module Test TOEIC-style và IELTS-style.
-# Khởi động ứng dụng bằng profile HTTPS trước khi chạy file này.
+# SKDJK - kiểm thử thủ công bằng HTTP cho module học và module Test.
+# Chạy các request theo thứ tự từ trên xuống vì bước sau sử dụng cookie/token của bước trước.
+# Khởi động ứng dụng: dotnet run --launch-profile https
 @HostAddress = https://localhost:7110
 
-# Sao chép cookie đăng nhập và anti-forgery token mới từ response HTML/cookie.
-# Không lưu cứng thông tin phiên thật vào source control.
-@authCookie = REPLACE_WITH_CURRENT_AUTH_COOKIE
-@antiForgeryToken = REPLACE_WITH_CURRENT_ANTIFORGERY_TOKEN
+# Sau request 1, sao chép cookie anti-forgery trong Set-Cookie và token trong input ẩn.
+@loginCookieHeader = .AspNetCore.Antiforgery.REPLACE_NAME=REPLACE_VALUE
+@loginAntiForgeryToken = REPLACE_WITH_LOGIN_FORM_TOKEN
+
+# Sau request 2, sao chép cookie đăng nhập từ Set-Cookie và ghép với cookie anti-forgery.
+# Giữ nguyên cả hai cookie trên cùng một dòng, ngăn cách bằng dấu chấm phẩy.
+@authCookieHeader = .LearningSystem.Auth=REPLACE_AUTH_VALUE; .AspNetCore.Antiforgery.REPLACE_NAME=REPLACE_VALUE
+
+# Sau mỗi GET có form POST, sao chép token mới trong input __RequestVerificationToken.
+# Token này được tạo cho người dùng đã đăng nhập nên không dùng lại loginAntiForgeryToken.
+@formAntiForgeryToken = REPLACE_WITH_AUTHENTICATED_FORM_TOKEN
 
 ### 1. Lấy form đăng nhập và anti-forgery token
+# Mong đợi: 200 OK, response có input name="__RequestVerificationToken"
+# và header Set-Cookie chứa cookie .AspNetCore.Antiforgery.*.
 GET {{HostAddress}}/Auth/Login
 Accept: text/html
 
 ### 2. Đăng nhập tài khoản seed hợp lệ
+# Mong đợi khi không tự follow redirect: 302 với Location: /.
+# Response có Set-Cookie: .LearningSystem.Auth=...
 POST {{HostAddress}}/Auth/Login
+Cookie: {{loginCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-Email=Bach1994%40gmail.com&Password=Bach123&RememberMe=false&__RequestVerificationToken={{antiForgeryToken}}
+Email=Bach1994%40gmail.com&Password=Bach123&RememberMe=false&__RequestVerificationToken={{loginAntiForgeryToken}}
 
 ### 3. Danh sách toàn bộ Test đang hoạt động
 GET {{HostAddress}}/tests?page=1&pageSize=10
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 4. Lọc TOEIC Practice bằng cả Format và Mode
 GET {{HostAddress}}/tests?format=ToeicStyle&mode=Practice&page=1&pageSize=10
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 5. Lọc IELTS Practice bằng cả Format và Mode
 GET {{HostAddress}}/tests?format=IeltsStyle&mode=Practice&page=1&pageSize=10
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 6. Mở TOEIC Practice; HTML không được chứa IsCorrect
+# Sao chép token trong form nộp bài vào formAntiForgeryToken trước khi chạy request 7.
 GET {{HostAddress}}/tests/10001
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 7. Submit đủ 22 câu TOEIC đúng theo thứ tự Order
 POST {{HostAddress}}/tests/10001/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20101&Answers[1].QuestionId=10108&Answers[1].AnswerId=20301&Answers[2].QuestionId=10102&Answers[2].AnswerId=20104&Answers[3].QuestionId=10109&Answers[3].AnswerId=20304&Answers[4].QuestionId=10103&Answers[4].AnswerId=20107&Answers[5].QuestionId=10110&Answers[5].AnswerId=20307&Answers[6].QuestionId=10111&Answers[6].AnswerId=20310&Answers[7].QuestionId=10104&Answers[7].AnswerId=20110&Answers[8].QuestionId=10112&Answers[8].AnswerId=20313&Answers[9].QuestionId=10113&Answers[9].AnswerId=20316&Answers[10].QuestionId=10105&Answers[10].AnswerId=20113&Answers[11].QuestionId=10114&Answers[11].AnswerId=20319&Answers[12].QuestionId=10115&Answers[12].AnswerId=20322&Answers[13].QuestionId=10106&Answers[13].AnswerId=20116&Answers[14].QuestionId=10116&Answers[14].AnswerId=20325&Answers[15].QuestionId=10117&Answers[15].AnswerId=20328&Answers[16].QuestionId=10118&Answers[16].AnswerId=20331&Answers[17].QuestionId=10107&Answers[17].AnswerId=20118&Answers[18].QuestionId=10119&Answers[18].AnswerId=20334&Answers[19].QuestionId=10120&Answers[19].AnswerId=20337&Answers[20].QuestionId=10121&Answers[20].AnswerId=20340&Answers[21].QuestionId=10122&Answers[21].AnswerId=20343
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20101&Answers[1].QuestionId=10108&Answers[1].AnswerId=20301&Answers[2].QuestionId=10102&Answers[2].AnswerId=20104&Answers[3].QuestionId=10109&Answers[3].AnswerId=20304&Answers[4].QuestionId=10103&Answers[4].AnswerId=20107&Answers[5].QuestionId=10110&Answers[5].AnswerId=20307&Answers[6].QuestionId=10111&Answers[6].AnswerId=20310&Answers[7].QuestionId=10104&Answers[7].AnswerId=20110&Answers[8].QuestionId=10112&Answers[8].AnswerId=20313&Answers[9].QuestionId=10113&Answers[9].AnswerId=20316&Answers[10].QuestionId=10105&Answers[10].AnswerId=20113&Answers[11].QuestionId=10114&Answers[11].AnswerId=20319&Answers[12].QuestionId=10115&Answers[12].AnswerId=20322&Answers[13].QuestionId=10106&Answers[13].AnswerId=20116&Answers[14].QuestionId=10116&Answers[14].AnswerId=20325&Answers[15].QuestionId=10117&Answers[15].AnswerId=20328&Answers[16].QuestionId=10118&Answers[16].AnswerId=20331&Answers[17].QuestionId=10107&Answers[17].AnswerId=20118&Answers[18].QuestionId=10119&Answers[18].AnswerId=20334&Answers[19].QuestionId=10120&Answers[19].AnswerId=20337&Answers[20].QuestionId=10121&Answers[20].AnswerId=20340&Answers[21].QuestionId=10122&Answers[21].AnswerId=20343
 
 ### 8. Mở IELTS Practice có Listening Part 1-4 và Reading Passage 1-3
+# Cập nhật formAntiForgeryToken bằng token trong response này trước khi submit.
 GET {{HostAddress}}/tests/10002
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 9. Submit IELTS với completion hợp lệ một từ
 POST {{HostAddress}}/tests/10002/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10202&Answers[0].TextAnswer=five&Answers[1].QuestionId=10201&Answers[1].AnswerId=20201&Answers[2].QuestionId=10203&Answers[2].AnswerId=20206&Answers[3].QuestionId=10208&Answers[3].AnswerId=20402&Answers[4].QuestionId=10204&Answers[4].TextAnswer=energy&Answers[5].QuestionId=10209&Answers[5].AnswerId=20405&Answers[6].QuestionId=10210&Answers[6].AnswerId=20407&Answers[7].QuestionId=10205&Answers[7].AnswerId=20212&Answers[8].QuestionId=10206&Answers[8].AnswerId=20213&Answers[9].QuestionId=10207&Answers[9].TextAnswer=electricity&Answers[10].QuestionId=10211&Answers[10].AnswerId=20411
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10202&Answers[0].TextAnswer=five&Answers[1].QuestionId=10201&Answers[1].AnswerId=20201&Answers[2].QuestionId=10203&Answers[2].AnswerId=20206&Answers[3].QuestionId=10208&Answers[3].AnswerId=20402&Answers[4].QuestionId=10204&Answers[4].TextAnswer=energy&Answers[5].QuestionId=10209&Answers[5].AnswerId=20405&Answers[6].QuestionId=10210&Answers[6].AnswerId=20407&Answers[7].QuestionId=10205&Answers[7].AnswerId=20212&Answers[8].QuestionId=10206&Answers[8].AnswerId=20213&Answers[9].QuestionId=10207&Answers[9].TextAnswer=electricity&Answers[10].QuestionId=10211&Answers[10].AnswerId=20411
 
 ### 10. Word-limit vượt một từ phải được server chấm sai, không cắt chuỗi
 POST {{HostAddress}}/tests/10002/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10202&Answers[0].TextAnswer=five%20pm
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10202&Answers[0].TextAnswer=five%20pm
 
 ### 11. AnswerId không thuộc Question phải bị server từ chối
 POST {{HostAddress}}/tests/10001/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20343
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20343
 
 ### 12. QuestionId của Test khác phải bị server từ chối
 POST {{HostAddress}}/tests/10001/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10201&Answers[0].AnswerId=20201
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10201&Answers[0].AnswerId=20201
 
 ### 13. Hai dòng cùng QuestionId phải bị server từ chối
 POST {{HostAddress}}/tests/10001/submit
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Content-Type: application/x-www-form-urlencoded
 
-__RequestVerificationToken={{antiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20101&Answers[1].QuestionId=10101&Answers[1].AnswerId=20102
+__RequestVerificationToken={{formAntiForgeryToken}}&Answers[0].QuestionId=10101&Answers[0].AnswerId=20101&Answers[1].QuestionId=10101&Answers[1].AnswerId=20102
 
 ### 14. Trang lịch sử dùng TotalQuestions snapshot của từng lượt làm
 GET {{HostAddress}}/Test/History
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 15. Dashboard admin hiển thị Format, Mode và trạng thái
 GET {{HostAddress}}/Test/TestManagementDashboard?format=&mode=
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
 Accept: text/html
 
 ### 16. Form câu hỏi có GroupCode, Instruction và MaxWords
 GET {{HostAddress}}/Test/EditQuestion?testId=10002&id=10202
-Cookie: .LearningSystem.Auth={{authCookie}}
+Cookie: {{authCookieHeader}}
+Accept: text/html
+
+### 17. Bài học của tôi chỉ hiển thị bài được học gần nhất
+# Chưa có tiến độ: HTML chứa "Chưa có bài học nào".
+# Đã có tiến độ: HTML chứa "Bài học gần nhất" và chỉ một my-lesson-row.
+GET {{HostAddress}}/Lesson/MyLessons
+Cookie: {{authCookieHeader}}
+Accept: text/html
+
+### 18. Trang tiến độ tổng hợp Lesson và TestHistory DTO
+GET {{HostAddress}}/Progress
+Cookie: {{authCookieHeader}}
+Accept: text/html
+
+### 19. Dashboard quản trị ngôn ngữ
+GET {{HostAddress}}/Language
+Cookie: {{authCookieHeader}}
+Accept: text/html
+
+### 20. Dashboard quản trị chủ đề
+GET {{HostAddress}}/Topic/TopicManagementDashboard
+Cookie: {{authCookieHeader}}
+Accept: text/html
+
+### 21. Dashboard quản trị bài học và từ vựng
+GET {{HostAddress}}/Lesson/LessonManagementDashboard
+Cookie: {{authCookieHeader}}
 Accept: text/html

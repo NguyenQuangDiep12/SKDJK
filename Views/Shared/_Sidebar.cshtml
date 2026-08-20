@@ -6,7 +6,7 @@
     <nav class="sidebar-menu" aria-label="Điều hướng người học">
         <a asp-controller="Home" asp-action="Index" class="sidebar-item @(controller == "Home" ? "active" : "")"><span>⌂</span><span>Trang chủ</span></a>
         <a asp-controller="Topic" asp-action="Index" class="sidebar-item @(controller == "Topic" ? "active" : "")"><span>▦</span><span>Danh sách chủ đề</span></a>
-        <a asp-controller="Progress" asp-action="Index" class="sidebar-item @(controller == "Progress" ? "active" : "")"><span>▤</span><span>Tiến độ của tôi</span></a>
+        <a asp-controller="Lesson" asp-action="MyLessons" class="sidebar-item @(controller == "Lesson" ? "active" : "")"><span>▣</span><span>Bài học của tôi</span></a>
         <a asp-controller="Test" asp-action="Index" class="sidebar-item @(controller == "Test" ? "active" : "")"><span>✓</span><span>Bài kiểm tra của tôi</span></a>
     </nav>
 </aside>

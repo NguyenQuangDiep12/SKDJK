@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SKDJK.Services.Interfaces;
 using SKDJK.ViewModels;
 using System.Security.Claims;

@@ -60,6 +60,57 @@
     /* Nội dung chính có khoảng đệm vừa đủ. */
     .main-content { min-width:0; padding:24px; }
 
+    /* Trang Bài học của tôi giới hạn chiều rộng giống vùng nội dung wireframe. */
+    .my-lessons-page { max-width:1050px; }
+
+    /* Trạng thái chưa có bài học được căn giữa trong một card đơn giản. */
+    .my-lessons-empty { min-height:330px; display:grid; place-items:center; align-content:center; gap:10px; text-align:center; }
+
+    /* Biểu tượng trạng thái trống dùng màu nhấn và không cần ảnh riêng. */
+    .my-lessons-empty-icon { width:54px; height:54px; display:grid; place-items:center; color:#fff; background:var(--primary); font-size:25px; }
+
+    /* Bỏ khoảng thừa quanh tiêu đề và mô tả trạng thái trống. */
+    .my-lessons-empty h2,.my-lessons-empty p { margin:0; }
+
+    /* Mô tả trạng thái trống dùng màu phụ. */
+    .my-lessons-empty p { color:var(--muted); }
+
+    /* Khối bài học gần nhất cách phần tiêu đề một khoảng vừa đủ. */
+    .my-lessons-section { margin-bottom:16px; }
+
+    /* Tiêu đề nhóm và số lượng được đặt ở hai đầu. */
+    .my-lessons-heading { margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+    /* Tiêu đề nhóm không giữ margin mặc định. */
+    .my-lessons-heading h2 { margin:0; font-size:19px; }
+
+    /* Một bài học gồm icon, nội dung và nút thao tác. */
+    .my-lesson-row { padding:12px; display:grid; grid-template-columns:46px minmax(0,1fr) auto; align-items:center; gap:12px; border:1px solid var(--line); background:#fff; }
+
+    /* Icon bài học là ô vuông đơn sắc. */
+    .my-lesson-icon { width:46px; height:46px; display:grid; place-items:center; color:var(--primary); border:1px solid var(--line); background:var(--canvas); font-size:20px; }
+
+    /* Nội dung bài học cho phép co lại mà không đẩy vỡ layout. */
+    .my-lesson-content { min-width:0; }
+
+    /* Tên bài và trạng thái nằm trên cùng một hàng. */
+    .my-lesson-title-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+    /* Tên bài học không có margin thừa. */
+    .my-lesson-title-row h3 { margin:0; font-size:16px; }
+
+    /* Metadata và mô tả dùng khoảng cách nhỏ. */
+    .my-lesson-content p { margin:5px 0; color:var(--muted); }
+
+    /* Mô tả bài học được giữ gọn trên màn danh sách. */
+    .my-lesson-description { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    /* Thanh tiến độ và phần trăm nằm cạnh nhau. */
+    .my-lesson-progress-line { margin:9px 0 6px; display:grid; grid-template-columns:minmax(120px,1fr) 45px; align-items:center; gap:9px; }
+
+    /* Thời gian học gần nhất dùng màu phụ. */
+    .my-lesson-content small { color:var(--muted); }
+
     /* Giới hạn chiều rộng để bảng và form không kéo quá dài. */
     .page { max-width:1200px; margin:0 auto; }
 
@@ -346,7 +397,7 @@
     @@media (max-width:980px) { .grid-4,.grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-two-column { grid-template-columns:1fr; } }
 
     /* Màn hình nhỏ chuyển sidebar lên trên và mọi grid về một cột. */
-    @@media (max-width:760px) { .header { padding:10px 14px; } .header-brand { min-width:0; } .header-brand span:last-child,.header-search { display:none; } .app-shell { grid-template-columns:1fr; } .sidebar,.admin-sidebar { border-right:0; border-bottom:1px solid var(--line); } .sidebar-menu,.admin-menu { grid-template-columns:repeat(2,minmax(0,1fr)); } .main-content { padding:14px; } .grid-2,.grid-3,.grid-4,.form-grid { grid-template-columns:1fr; } .page-heading,.page-toolbar { align-items:flex-start; flex-direction:column; } .test-meta { grid-template-columns:1fr; } .timer { border-left:0; border-top:1px solid var(--line); } }
+    @@media (max-width:760px) { .header { padding:10px 14px; } .header-brand { min-width:0; } .header-brand span:last-child,.header-search { display:none; } .app-shell { grid-template-columns:1fr; } .sidebar,.admin-sidebar { border-right:0; border-bottom:1px solid var(--line); } .sidebar-menu,.admin-menu { grid-template-columns:repeat(2,minmax(0,1fr)); } .main-content { padding:14px; } .grid-2,.grid-3,.grid-4,.form-grid { grid-template-columns:1fr; } .page-heading,.page-toolbar { align-items:flex-start; flex-direction:column; } .test-meta { grid-template-columns:1fr; } .timer { border-left:0; border-top:1px solid var(--line); } .my-lesson-row { grid-template-columns:42px minmax(0,1fr); } .my-lesson-row>.button { grid-column:1/-1; width:100%; } }
 
     /* Điện thoại hẹp chuyển menu và điều hướng group sang chiều dọc. */
     @@media (max-width:480px) { .sidebar-menu,.admin-menu { grid-template-columns:1fr; } .question-nav { align-items:stretch; flex-direction:column; } }

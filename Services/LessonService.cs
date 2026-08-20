@@ -18,6 +18,46 @@ namespace SKDJK.Services
             _dbContext = dbContext;
         }
 
+        public async Task<Result<MyLessonPageDto>> GetMyLessonsAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            // Xác nhận UserId lấy từ claim vẫn tồn tại trước khi truy vấn tiến độ.
+            bool userExists = await _dbContext.Users.AsNoTracking().AnyAsync(x => x.Id == userId, cancellationToken);
+
+            // Không trả dữ liệu của tài khoản không tồn tại.
+            if (!userExists)
+            {
+                return Result<MyLessonPageDto>.Failure(new Error("User.NotFound", "Không tìm thấy người học."));
+            }
+
+            // Chỉ lấy một bài có lần học gần nhất, bất kể đang dở hay đã hoàn thành.
+            MyLessonItemDto? latestLesson = await _dbContext.LearningProgress
+                .AsNoTracking()
+                .Where(progress => progress.UserId == userId && progress.Status != LearningStatus.NOTSTARTED)
+                .OrderByDescending(progress => progress.LastStudyAt)
+                .ThenByDescending(progress => progress.Id)
+                .Select(progress => new MyLessonItemDto
+                {
+                    LessonId = progress.LessonId,
+                    LessonTitle = progress.Lesson.Title,
+                    Description = progress.Lesson.Description,
+                    TopicName = progress.Lesson.Topic.Name,
+                    LanguageName = progress.Lesson.Topic.Language.Name,
+                    Status = progress.Status,
+                    CompletionPercent = progress.CompletionPercent,
+                    LastStudyAt = progress.LastStudyAt
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            // DTO vẫn hợp lệ khi LatestLesson null để View hiển thị trạng thái chưa có bài học.
+            MyLessonPageDto dto = new()
+            {
+                LatestLesson = latestLesson
+            };
+
+            // Trả duy nhất bài gần nhất hoặc null cho Controller.
+            return Result<MyLessonPageDto>.Success(dto);
+        }
+
         public async Task<Result<LessonStudyDto>> GetStudyAsync(int lessonId, int userId, CancellationToken cancellationToken = default)
         {
             bool userExists = await _dbContext.Users.AsNoTracking().AnyAsync(x => x.Id == userId, cancellationToken);

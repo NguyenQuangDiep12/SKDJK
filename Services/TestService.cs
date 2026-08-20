@@ -20,7 +20,15 @@ namespace SKDJK.Services
             _passingScore = configuration.GetValue<decimal?>("Testing:PassingScore") ?? 70m;
         }
 
-        public async Task<Result<TestListDto>> GetTestsAsync(int userId, string? search, TestFormat? format, TestMode? mode, string? level, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<Result<TestListDto>> GetTestsAsync(
+            int userId, 
+            string? search, 
+            TestFormat? format, 
+            TestMode? mode, 
+            string? level, 
+            int page = 1, 
+            int pageSize = 10, 
+            CancellationToken cancellationToken = default)
         {
             // Không cho page nhỏ hơn 1 để phép Skip không nhận số âm.
             page = Math.Max(1, page);

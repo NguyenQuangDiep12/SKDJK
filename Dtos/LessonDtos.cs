@@ -2,6 +2,25 @@ using SKDJK.Models.enums;
 
 namespace SKDJK.Dtos
 {
+    // DTO trang Bài học của tôi chỉ chứa bài được truy cập gần nhất.
+    public sealed class MyLessonPageDto
+    {
+        public MyLessonItemDto? LatestLesson { get; init; }
+    }
+
+    // DTO một bài học cùng trạng thái được chuyển từ Service sang Controller.
+    public sealed class MyLessonItemDto
+    {
+        public int LessonId { get; init; }
+        public string LessonTitle { get; init; } = string.Empty;
+        public string? Description { get; init; }
+        public string TopicName { get; init; } = string.Empty;
+        public string LanguageName { get; init; } = string.Empty;
+        public LearningStatus Status { get; init; }
+        public decimal CompletionPercent { get; init; }
+        public DateTime? LastStudyAt { get; init; }
+    }
+
     // Chứa toàn bộ dữ liệu của trang học nhưng không truyền entity ra Razor View.
     public sealed class LessonStudyDto
     {

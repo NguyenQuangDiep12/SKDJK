@@ -6,6 +6,7 @@ namespace SKDJK.Services.Interfaces
     // Tất cả dữ liệu đi qua Service/Controller là DTO, không phải ViewModel.
     public interface ILessonService
     {
+        Task<Result<MyLessonPageDto>> GetMyLessonsAsync(int userId, CancellationToken cancellationToken = default);
         Task<Result<LessonStudyDto>> GetStudyAsync(int lessonId, int userId, CancellationToken cancellationToken = default);
         Task<Result<VocabularyLearningDto>> GetVocabularyAsync(int lessonId, CancellationToken cancellationToken = default);
         Task<Result<GrammarLearningDto>> GetGrammarAsync(int lessonId, CancellationToken cancellationToken = default);
