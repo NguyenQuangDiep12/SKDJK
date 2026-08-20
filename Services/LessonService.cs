@@ -12,10 +12,12 @@ namespace SKDJK.Services
     public sealed class LessonService : ILessonService
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IFreeDictionaryService _freeDictionaryService;
 
-        public LessonService(ApplicationDbContext dbContext)
+        public LessonService(ApplicationDbContext dbContext, IFreeDictionaryService freeDictionaryService)
         {
             _dbContext = dbContext;
+            _freeDictionaryService = freeDictionaryService;
         }
 
         public async Task<Result<MyLessonPageDto>> GetMyLessonsAsync(int userId, CancellationToken cancellationToken = default)
@@ -122,7 +124,8 @@ namespace SKDJK.Services
                         Word = x.Word,
                         Meaning = x.Meaning ?? string.Empty,
                         Pronunciation = x.Pronunciation,
-                        Example = x.Example
+                        Example = x.Example,
+                        AudioUrl = x.AudioUrl
                     })
                     .ToList()
             };
@@ -201,7 +204,8 @@ namespace SKDJK.Services
                         Word = x.Word,
                         Meaning = x.Meaning ?? string.Empty,
                         Pronunciation = x.Pronunciation,
-                        Example = x.Example
+                        Example = x.Example,
+                        AudioUrl = x.AudioUrl
                     })
                     .ToList()
             };
@@ -444,6 +448,14 @@ namespace SKDJK.Services
                 return Result.Failure(new Error("Lesson.NotFound", "Không tìm thấy bài học."));
             }
 
+            // Tra đúng từ admin nhập để AudioUrl luôn có nguồn từ Free Dictionary, không lấy URL từ form.
+            string normalizedWord = request.Word.Trim();
+            var pronunciationResult = await _freeDictionaryService.GetPronunciationAsync(normalizedWord, cancellationToken);
+            if (!pronunciationResult.IsSuccess)
+            {
+                return Result.Failure(pronunciationResult.Error);
+            }
+
             Vocabulary vocabulary;
             if (request.Id.HasValue)
             {
@@ -459,11 +471,17 @@ namespace SKDJK.Services
                 _dbContext.Vocabularies.Add(vocabulary);
             }
 
-            vocabulary.Word = request.Word.Trim();
+            vocabulary.Word = normalizedWord;
             vocabulary.Meaning = string.IsNullOrWhiteSpace(request.Meaning) ? null : request.Meaning.Trim();
-            vocabulary.Pronunciation = string.IsNullOrWhiteSpace(request.Pronunciation) ? null : request.Pronunciation.Trim();
+
+            // Ưu tiên phiên âm Free Dictionary; chỉ dùng giá trị admin nhập khi API không có phiên âm.
+            vocabulary.Pronunciation = string.IsNullOrWhiteSpace(pronunciationResult.Value.Phonetic)
+                ? (string.IsNullOrWhiteSpace(request.Pronunciation) ? null : request.Pronunciation.Trim())
+                : pronunciationResult.Value.Phonetic.Trim();
             vocabulary.Example = string.IsNullOrWhiteSpace(request.Example) ? null : request.Example.Trim();
-            vocabulary.AudioUrl = string.IsNullOrWhiteSpace(request.AudioUrl) ? null : request.AudioUrl.Trim();
+
+            // Chỉ lưu URL audio HTTPS do Free Dictionary trả về.
+            vocabulary.AudioUrl = pronunciationResult.Value.AudioUrl;
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

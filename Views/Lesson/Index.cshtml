@@ -63,21 +63,25 @@
         });
 
         // Gọi endpoint nội bộ lấy audio mẫu; không dùng browser TTS.
-        async function playPronunciation(word, statusElement, phoneticElement) {
+        async function playPronunciation(word, statusElement, phoneticElement, savedAudioUrl) {
             // Báo trạng thái trong lúc chờ API.
             statusElement.textContent = "Đang tải audio phát âm...";
 
             try {
-                // Encode từ trước khi đưa vào query string.
-                const response = await fetch(`/dictionary/pronunciation?word=${encodeURIComponent(word)}`);
+                // Từ vựng ưu tiên AudioUrl đã được lưu từ Free Dictionary; Speaking vẫn có thể tra trực tiếp.
+                let data = { audioUrl: savedAudioUrl, phonetic: null };
+                if (!data.audioUrl) {
+                    // Encode từ trước khi đưa vào query string.
+                    const response = await fetch(`/dictionary/pronunciation?word=${encodeURIComponent(word)}`);
 
-                // Đọc JSON do endpoint nội bộ trả về.
-                const data = await response.json();
+                    // Đọc JSON do endpoint nội bộ trả về.
+                    data = await response.json();
 
-                // Hiển thị message fallback nếu API không có audio.
-                if (!response.ok || !data.audioUrl) {
-                    statusElement.textContent = data.message || "Chưa có audio phát âm cho từ này.";
-                    return;
+                    // Hiển thị message fallback nếu API không có audio.
+                    if (!response.ok || !data.audioUrl) {
+                        statusElement.textContent = data.message || "Chưa có audio phát âm cho từ này.";
+                        return;
+                    }
                 }
 
                 // Cập nhật phiên âm khi API có dữ liệu tốt hơn.
@@ -141,8 +145,8 @@
             // Chuyển sang từ tiếp nếu còn phần tử.
             next.addEventListener("click", function () { if (currentIndex < items.length - 1) { currentIndex++; render(); } });
 
-            // Nút loa gọi Free Dictionary cho từ đang hiển thị.
-            play.addEventListener("click", function () { playPronunciation(items[currentIndex].word, status, pronunciation); });
+            // Nút loa dùng URL Free Dictionary đã lưu trong Vocabulary, và chỉ tra lại cho dữ liệu cũ chưa có URL.
+            play.addEventListener("click", function () { playPronunciation(items[currentIndex].word, status, pronunciation, items[currentIndex].audioUrl); });
 
             // Render từ đầu tiên.
             render();

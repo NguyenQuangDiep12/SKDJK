@@ -63,7 +63,7 @@ namespace SKDJK.Dtos
         public List<TopicCardDto> Items { get; set; } = [];
     }
 
-    // DTO form chủ đề nhận dữ liệu đã được ViewModel kiểm tra ở Controller.
+    // DTO form chủ đề phục vụ riêng cho Razor tạo/sửa và danh sách ngôn ngữ.
     public sealed class AdminTopicFormDto
     {
         public int? Id { get; set; }
@@ -73,5 +73,25 @@ namespace SKDJK.Dtos
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public List<LanguageOptionDto> Languages { get; set; } = [];
+    }
+
+    // DTO lệnh tạo Topic không có Id vì database chịu trách nhiệm sinh khóa chính.
+    public sealed class CreateTopicDto
+    {
+        public int LanguageId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+    // DTO lệnh cập nhật không có Id; Controller truyền Id URL riêng vào UpdateAsync.
+    public sealed class UpdateTopicDto
+    {
+        public int LanguageId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

@@ -27,6 +27,6 @@
             <strong id="vocabulary-position"></strong>
             <button type="button" id="next-vocabulary" class="button">Từ tiếp →</button>
         </div>
-        <script type="application/json" id="vocabulary-data">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items.Select(x => new { vocabularyId = x.VocabularyId, word = x.Word, meaning = x.Meaning, pronunciation = x.Pronunciation, example = x.Example })))</script>
+        <script type="application/json" id="vocabulary-data">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items.Select(x => new { vocabularyId = x.VocabularyId, word = x.Word, meaning = x.Meaning, pronunciation = x.Pronunciation, example = x.Example, audioUrl = x.AudioUrl })))</script>
     }
 </section>

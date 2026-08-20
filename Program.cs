@@ -74,10 +74,10 @@ builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<ITestService, TestService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
-builder.Services.AddScoped<IUploadImage, CloudinaryImageUploadFileProvider>();
+builder.Services.AddScoped<IUploadFile, CloudinaryMediaService>();
 builder.Services.AddHttpClient<IFreeDictionaryService, FreeDictionaryService>(client =>
 {
-    // Free Dictionary là nguồn audio mẫu duy nhất cho tab luyện nói.
+    // Free Dictionary là nguồn AudioUrl của Vocabulary và audio mẫu cho tab luyện nói.
     client.BaseAddress = new Uri("https://api.dictionaryapi.dev/");
     client.Timeout = TimeSpan.FromSeconds(10);
 });

@@ -53,6 +53,7 @@ namespace SKDJK.Dtos
         public string Meaning { get; init; } = string.Empty;
         public string? Pronunciation { get; init; }
         public string? Example { get; init; }
+        public string? AudioUrl { get; init; }
     }
 
     // Dùng nội dung Lesson.Content hiện có cho phần ngữ pháp, tránh tạo bảng thừa.

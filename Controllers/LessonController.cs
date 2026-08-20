@@ -230,8 +230,7 @@ namespace SKDJK.Controllers
                     Word = model.Word,
                     Meaning = model.Meaning,
                     Pronunciation = model.Pronunciation,
-                    Example = model.Example,
-                    AudioUrl = model.AudioUrl
+                    Example = model.Example
                 };
                 var result = await _lessonService.SaveVocabularyAsync(request, cancellationToken);
                 if (result.IsSuccess)
@@ -285,7 +284,8 @@ namespace SKDJK.Controllers
                     Word = x.Word,
                     Meaning = x.Meaning,
                     Pronunciation = x.Pronunciation,
-                    Example = x.Example
+                    Example = x.Example,
+                    AudioUrl = x.AudioUrl
                 }).ToList()
             };
         }

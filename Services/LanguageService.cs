@@ -17,16 +17,21 @@ namespace SKDJK.Services
             _dbContext = dbContext;
         }
 
-        public async Task<Result<AdminLanguageListDto>> GetAsync(string? search, CancellationToken cancellationToken = default)
+        public async Task<Result<AdminLanguageListDto>> GetAllAsync(string? search, CancellationToken cancellationToken = default)
         {
+            // Chuẩn hóa từ khóa để tìm kiếm không bị ảnh hưởng bởi khoảng trắng hai đầu.
             string normalizedSearch = search?.Trim() ?? string.Empty;
+
+            // Truy vấn chỉ đọc giúp EF Core không theo dõi Entity không cần cập nhật.
             IQueryable<Language> query = _dbContext.Languages.AsNoTracking();
 
+            // Chỉ thêm điều kiện khi người quản trị thực sự nhập từ khóa.
             if (normalizedSearch.Length > 0)
             {
                 query = query.Where(x => x.Name.Contains(normalizedSearch) || x.Code.Contains(normalizedSearch));
             }
 
+            // Service project Entity thành DTO danh sách trước khi trả cho Controller.
             AdminLanguageListDto dto = new()
             {
                 Search = search,
@@ -46,16 +51,12 @@ namespace SKDJK.Services
             return Result<AdminLanguageListDto>.Success(dto);
         }
 
-        public async Task<Result<AdminLanguageFormDto>> GetFormAsync(int? id, CancellationToken cancellationToken = default)
+        public async Task<Result<AdminLanguageFormDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            if (!id.HasValue)
-            {
-                return Result<AdminLanguageFormDto>.Success(new AdminLanguageFormDto());
-            }
-
+            // Đọc đúng một Language thành DTO, không trả Entity ra Controller.
             AdminLanguageFormDto? dto = await _dbContext.Languages
                 .AsNoTracking()
-                .Where(x => x.Id == id.Value)
+                .Where(x => x.Id == id)
                 .Select(x => new AdminLanguageFormDto
                 {
                     Id = x.Id,
@@ -70,42 +71,100 @@ namespace SKDJK.Services
                 : Result<AdminLanguageFormDto>.Success(dto);
         }
 
-        public async Task<Result<int>> SaveAsync(AdminLanguageFormDto request, CancellationToken cancellationToken = default)
+        public async Task<Result<int>> CreateAsync(CreateLanguageDto request, CancellationToken cancellationToken = default)
         {
-            string name = request.Name.Trim();
-            string code = request.Code.Trim().ToLowerInvariant();
+            // Chuẩn hóa dữ liệu đầu vào trước khi kiểm tra và lưu.
+            string name = (request.Name ?? string.Empty).Trim();
+            string code = (request.Code ?? string.Empty).Trim().ToLowerInvariant();
 
+            // Service vẫn kiểm tra input để an toàn khi được gọi ngoài Razor Controller.
+            if (name.Length == 0 || name.Length > 50)
+            {
+                return Result<int>.Failure(new Error("Language.InvalidName", "Tên ngôn ngữ phải có từ 1 đến 50 ký tự."));
+            }
+
+            // Mã ngôn ngữ phải đúng giới hạn cột và chỉ dùng chữ cái hoặc dấu gạch ngang.
+            if (code.Length == 0 || code.Length > 10 || code.Any(character => (character < 'a' || character > 'z') && character != '-'))
+            {
+                return Result<int>.Failure(new Error("Language.InvalidCode", "Mã ngôn ngữ chỉ gồm chữ cái, dấu gạch ngang và tối đa 10 ký tự."));
+            }
+
+            // CREATE kiểm tra trùng code trên toàn bộ bảng vì chưa có bản ghi hiện tại để loại trừ.
             bool duplicateCode = await _dbContext.Languages
-                .AnyAsync(x => x.Code == code && (!request.Id.HasValue || x.Id != request.Id.Value), cancellationToken);
+                .AnyAsync(x => x.Code == code, cancellationToken);
 
+            // Không cho database ném lỗi unique index khi có thể trả lỗi nghiệp vụ rõ ràng.
             if (duplicateCode)
             {
                 return Result<int>.Failure(new Error("Language.DuplicateCode", "Mã ngôn ngữ đã tồn tại."));
             }
 
-            Language language;
-            if (request.Id.HasValue)
+            // CreateAsync luôn tạo Entity mới và không chứa nhánh cập nhật.
+            Language language = new()
             {
-                language = await _dbContext.Languages.FirstOrDefaultAsync(x => x.Id == request.Id.Value, cancellationToken)
-                    ?? null!;
+                Name = name,
+                Code = code,
+                Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim()
+            };
 
-                if (language is null)
-                {
-                    return Result<int>.Failure(new Error("Language.NotFound", "Không tìm thấy ngôn ngữ."));
-                }
-            }
-            else
+            // Đưa Entity mới vào change tracker.
+            _dbContext.Languages.Add(language);
+
+            // Một SaveChangesAsync là đủ atomic cho thao tác thêm một Entity.
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            // Trả Id do database tạo để Controller có thể redirect nếu cần.
+            return Result<int>.Success(language.Id);
+        }
+
+        public async Task<Result> UpdateAsync(int id, UpdateLanguageDto request, CancellationToken cancellationToken = default)
+        {
+            // UPDATE phải tìm bản ghi theo Id riêng, không đọc Id từ DTO.
+            Language? language = await _dbContext.Languages
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            // Không biến Update thành Create khi Id không tồn tại.
+            if (language is null)
             {
-                language = new Language();
-                _dbContext.Languages.Add(language);
+                return Result.Failure(new Error("Language.NotFound", "Không tìm thấy ngôn ngữ."));
             }
 
+            // Chuẩn hóa dữ liệu cập nhật theo cùng convention với Create.
+            string name = (request.Name ?? string.Empty).Trim();
+            string code = (request.Code ?? string.Empty).Trim().ToLowerInvariant();
+
+            // Kiểm tra tên trước khi gán vào Entity đang được theo dõi.
+            if (name.Length == 0 || name.Length > 50)
+            {
+                return Result.Failure(new Error("Language.InvalidName", "Tên ngôn ngữ phải có từ 1 đến 50 ký tự."));
+            }
+
+            // Kiểm tra định dạng code tại Service thay vì chỉ tin ModelState của Razor.
+            if (code.Length == 0 || code.Length > 10 || code.Any(character => (character < 'a' || character > 'z') && character != '-'))
+            {
+                return Result.Failure(new Error("Language.InvalidCode", "Mã ngôn ngữ chỉ gồm chữ cái, dấu gạch ngang và tối đa 10 ký tự."));
+            }
+
+            // Loại trừ chính Id hiện tại khi kiểm tra code trùng.
+            bool duplicateCode = await _dbContext.Languages
+                .AnyAsync(x => x.Code == code && x.Id != id, cancellationToken);
+
+            // Trả lỗi nghiệp vụ nếu một Language khác đã sử dụng code.
+            if (duplicateCode)
+            {
+                return Result.Failure(new Error("Language.DuplicateCode", "Mã ngôn ngữ đã tồn tại."));
+            }
+
+            // Gán các trường được phép cập nhật lên Entity hiện tại.
             language.Name = name;
             language.Code = code;
             language.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
 
+            // Lưu duy nhất thao tác cập nhật Language.
             await _dbContext.SaveChangesAsync(cancellationToken);
-            return Result<int>.Success(language.Id);
+
+            // Update thành công không cần trả lại Id vì Id đã nằm trên URL.
+            return Result.Success();
         }
 
         public async Task<Result> DeleteAsync(int id, CancellationToken cancellationToken = default)

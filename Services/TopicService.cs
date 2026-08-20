@@ -17,7 +17,7 @@ namespace SKDJK.Services
             _dbContext = dbContext;
         }
 
-        public async Task<Result<TopicListDto>> GetTopicsAsync(string? search, int? languageId, string? level, int page = 1, int pageSize = 12, CancellationToken cancellationToken = default)
+        public async Task<Result<TopicListDto>> GetAllAsync(string? search, int? languageId, string? level, int page = 1, int pageSize = 12, CancellationToken cancellationToken = default)
         {
             // Chuẩn hóa phân trang ngay trong hàm thay vì gọi helper private.
             page = Math.Max(1, page);
@@ -87,12 +87,12 @@ namespace SKDJK.Services
             return Result<TopicListDto>.Success(dto);
         }
 
-        public async Task<Result<TopicDetailsDto>> GetDetailsAsync(int topicId, int? userId, CancellationToken cancellationToken = default)
+        public async Task<Result<TopicDetailsDto>> GetByIdAsync(int id, int? userId = null, CancellationToken cancellationToken = default)
         {
             // Truy vấn chi tiết và tiến độ trực tiếp thành DTO.
             TopicDetailsDto? dto = await _dbContext.Topics
                 .AsNoTracking()
-                .Where(x => x.Id == topicId)
+                .Where(x => x.Id == id)
                 .Select(x => new TopicDetailsDto
                 {
                     Id = x.Id,
@@ -221,40 +221,126 @@ namespace SKDJK.Services
             return Result<AdminTopicFormDto>.Success(dto);
         }
 
-        public async Task<Result<int>> SaveAsync(AdminTopicFormDto request, CancellationToken cancellationToken = default)
+        public async Task<Result<int>> CreateAsync(CreateTopicDto request, CancellationToken cancellationToken = default)
         {
-            // Xác nhận khóa ngoại Language bằng dữ liệu server.
-            bool languageExists = await _dbContext.Languages.AnyAsync(x => x.Id == request.LanguageId, cancellationToken);
+            // Xác nhận LanguageId tồn tại trước khi tạo Topic có khóa ngoại này.
+            bool languageExists = await _dbContext.Languages
+                .AsNoTracking()
+                .AnyAsync(x => x.Id == request.LanguageId, cancellationToken);
+
+            // Không để database tự ném lỗi khóa ngoại khó hiểu cho người dùng.
             if (!languageExists)
             {
                 return Result<int>.Failure(new Error("Topic.InvalidLanguage", "Ngôn ngữ được chọn không tồn tại."));
             }
 
-            // Chọn entity cần thêm hoặc sửa.
-            Topic topic;
-            if (request.Id.HasValue)
+            // Chuẩn hóa chuỗi trước khi validation và lưu.
+            string name = (request.Name ?? string.Empty).Trim();
+            string level = (request.Level ?? string.Empty).Trim();
+            string? description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+            string? imageUrl = string.IsNullOrWhiteSpace(request.ImageUrl) ? null : request.ImageUrl.Trim();
+
+            // Tên Topic phải phù hợp giới hạn cột hiện tại.
+            if (name.Length == 0 || name.Length > 100)
             {
-                topic = await _dbContext.Topics.FirstOrDefaultAsync(x => x.Id == request.Id.Value, cancellationToken) ?? null!;
-                if (topic is null)
-                {
-                    return Result<int>.Failure(new Error("Topic.NotFound", "Không tìm thấy chủ đề."));
-                }
-            }
-            else
-            {
-                topic = new Topic();
-                _dbContext.Topics.Add(topic);
+                return Result<int>.Failure(new Error("Topic.InvalidName", "Tên chủ đề phải có từ 1 đến 100 ký tự."));
             }
 
-            // Ánh xạ DTO vào Entity sau khi toàn bộ validation đã đạt.
-            topic.LanguageId = request.LanguageId;
-            topic.Name = request.Name.Trim();
-            topic.Level = request.Level.Trim();
-            topic.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
-            topic.ImageUrl = string.IsNullOrWhiteSpace(request.ImageUrl) ? null : request.ImageUrl.Trim();
+            // Level giữ đúng ba giá trị đang dùng ở Razor và không tạo bảng Level mới.
+            string[] allowedLevels = ["Cơ bản", "Trung cấp", "Nâng cao"];
+            string? normalizedLevel = allowedLevels.FirstOrDefault(value => value.Equals(level, StringComparison.OrdinalIgnoreCase));
+            if (normalizedLevel is null)
+            {
+                return Result<int>.Failure(new Error("Topic.InvalidLevel", "Cấp độ phải là Cơ bản, Trung cấp hoặc Nâng cao."));
+            }
 
+            // Description phải tuân theo độ dài cột hiện tại thay vì tạo migration mới.
+            if (description?.Length > 255)
+            {
+                return Result<int>.Failure(new Error("Topic.InvalidDescription", "Mô tả chủ đề không được vượt quá 255 ký tự."));
+            }
+
+            // CreateAsync luôn khởi tạo Entity mới và không chứa nhánh Update.
+            Topic topic = new()
+            {
+                LanguageId = request.LanguageId,
+                Name = name,
+                Level = normalizedLevel,
+                Description = description,
+                ImageUrl = imageUrl
+            };
+
+            // Đưa Topic mới vào change tracker.
+            _dbContext.Topics.Add(topic);
+
+            // CRUD một Entity chỉ cần một SaveChangesAsync, không cần transaction thủ công.
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            // Trả Id do database tạo cho Controller.
             return Result<int>.Success(topic.Id);
+        }
+
+        public async Task<Result> UpdateAsync(int id, UpdateTopicDto request, CancellationToken cancellationToken = default)
+        {
+            // Update luôn tìm Topic theo Id URL trước và không tạo mới khi không thấy.
+            Topic? topic = await _dbContext.Topics
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            // Id không tồn tại là lỗi NotFound, không phải lệnh Create.
+            if (topic is null)
+            {
+                return Result.Failure(new Error("Topic.NotFound", "Không tìm thấy chủ đề."));
+            }
+
+            // Xác nhận LanguageId mới tồn tại trước khi cập nhật khóa ngoại.
+            bool languageExists = await _dbContext.Languages
+                .AsNoTracking()
+                .AnyAsync(x => x.Id == request.LanguageId, cancellationToken);
+
+            // Giữ nguyên Topic nếu người dùng chọn ngôn ngữ không hợp lệ.
+            if (!languageExists)
+            {
+                return Result.Failure(new Error("Topic.InvalidLanguage", "Ngôn ngữ được chọn không tồn tại."));
+            }
+
+            // Chuẩn hóa chuỗi theo cùng convention với CreateAsync.
+            string name = (request.Name ?? string.Empty).Trim();
+            string level = (request.Level ?? string.Empty).Trim();
+            string? description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+            string? imageUrl = string.IsNullOrWhiteSpace(request.ImageUrl) ? null : request.ImageUrl.Trim();
+
+            // Không ghi tên rỗng hoặc dài hơn cấu hình Entity hiện tại.
+            if (name.Length == 0 || name.Length > 100)
+            {
+                return Result.Failure(new Error("Topic.InvalidName", "Tên chủ đề phải có từ 1 đến 100 ký tự."));
+            }
+
+            // Chuẩn hóa Level về đúng cách viết đang dùng trong database.
+            string[] allowedLevels = ["Cơ bản", "Trung cấp", "Nâng cao"];
+            string? normalizedLevel = allowedLevels.FirstOrDefault(value => value.Equals(level, StringComparison.OrdinalIgnoreCase));
+            if (normalizedLevel is null)
+            {
+                return Result.Failure(new Error("Topic.InvalidLevel", "Cấp độ phải là Cơ bản, Trung cấp hoặc Nâng cao."));
+            }
+
+            // Chặn Description vượt độ dài cột để không cần thay đổi schema.
+            if (description?.Length > 255)
+            {
+                return Result.Failure(new Error("Topic.InvalidDescription", "Mô tả chủ đề không được vượt quá 255 ký tự."));
+            }
+
+            // Chỉ cập nhật các trường được DTO cho phép.
+            topic.LanguageId = request.LanguageId;
+            topic.Name = name;
+            topic.Level = normalizedLevel;
+            topic.Description = description;
+            topic.ImageUrl = imageUrl;
+
+            // Lưu duy nhất thao tác Update hiện tại.
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            // Update không cần trả Id vì Controller đã có Id trên route.
+            return Result.Success();
         }
 
         public async Task<Result> DeleteAsync(int id, CancellationToken cancellationToken = default)

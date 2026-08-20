@@ -1,5 +1,6 @@
 using SKDJK.Models.enums;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace SKDJK.ViewModels
 {
@@ -21,13 +22,17 @@ namespace SKDJK.ViewModels
         [Display(Name = "Cấp độ")]
         public string Level { get; set; } = string.Empty;
 
-        [StringLength(1000)]
+        [StringLength(255)]
         [Display(Name = "Mô tả")]
         public string? Description { get; set; }
 
         [StringLength(500)]
         [Display(Name = "URL hình ảnh")]
         public string? ImageUrl { get; set; }
+
+        // File chỉ đi giữa Razor và Controller; URL sau upload mới được đưa vào DTO cho Service.
+        [Display(Name = "Ảnh chủ đề")]
+        public IFormFile? ImageFile { get; set; }
 
         public List<LanguageOptionViewModel> Languages { get; set; } = new();
     }
@@ -200,9 +205,17 @@ namespace SKDJK.ViewModels
         [Display(Name = "URL hình ảnh")]
         public string? ImageUrl { get; set; }
 
+        // File upload là dữ liệu của form nên thuộc ViewModel, không đưa IFormFile xuống DTO/Service nghiệp vụ.
+        [Display(Name = "Ảnh câu hỏi")]
+        public IFormFile? ImageFile { get; set; }
+
         [StringLength(500)]
         [Display(Name = "URL âm thanh")]
         public string? AudioUrl { get; set; }
+
+        // Controller upload file này vào questionaudio rồi chỉ truyền URL qua DTO.
+        [Display(Name = "Audio câu hỏi")]
+        public IFormFile? AudioFile { get; set; }
 
         [StringLength(500)]
         [Display(Name = "Hướng dẫn")]

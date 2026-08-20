@@ -12,10 +12,12 @@ namespace SKDJK.Controllers
     public sealed class TestController : Controller
     {
         private readonly ITestService _testService;
+        private readonly IUploadFile _uploadFile;
 
-        public TestController(ITestService testService)
+        public TestController(ITestService testService, IUploadFile uploadFile)
         {
             _testService = testService;
+            _uploadFile = uploadFile;
         }
 
         // Cung cấp đúng endpoint GET /tests trong đặc tả.
@@ -202,39 +204,90 @@ namespace SKDJK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveQuestion(AdminQuestionFormViewModel model, CancellationToken cancellationToken = default)
         {
-            if (ModelState.IsValid)
+            // Khi sửa, Controller lấy URL hiện có từ Service thay vì tin URL do trình duyệt gửi lên.
+            string? imageUrl = null;
+            string? audioUrl = null;
+            if (model.Id.HasValue)
             {
-                // Controller đổi ViewModel của form câu hỏi thành DTO cho Service.
-                var request = new AdminQuestionFormDto
+                var currentResult = await _testService.GetQuestionFormAsync(model.TestId, model.Id, cancellationToken);
+                if (!currentResult.IsSuccess)
                 {
-                    Id = model.Id,
-                    TestId = model.TestId,
-                    Content = model.Content,
-                    QuestionType = model.QuestionType,
-                    SectionName = model.SectionName,
-                    PartNumber = model.PartNumber,
-                    Order = model.Order,
-                    GroupCode = model.GroupCode,
-                    ContextText = model.ContextText,
-                    ImageUrl = model.ImageUrl,
-                    AudioUrl = model.AudioUrl,
-                    Instruction = model.Instruction,
-                    MaxWords = model.MaxWords,
-                    Answers = model.Answers.Select(answer => new AdminAnswerInputDto
-                    {
-                        Content = answer.Content,
-                        IsCorrect = answer.IsCorrect
-                    }).ToList()
-                };
-                var result = await _testService.SaveQuestionAsync(request, cancellationToken);
-                if (result.IsSuccess)
-                {
-                    TempData["SuccessMessage"] = "Đã lưu câu hỏi và đáp án.";
-                    return RedirectToAction(nameof(Questions), new { testId = model.TestId });
+                    ModelState.AddModelError(string.Empty, currentResult.Error.Message);
                 }
-                ModelState.AddModelError(string.Empty, result.Error.Message);
+                else
+                {
+                    imageUrl = currentResult.Value.ImageUrl;
+                    audioUrl = currentResult.Value.AudioUrl;
+                }
             }
 
+            if (ModelState.IsValid)
+            {
+                // File ảnh của câu hỏi được upload đúng thư mục questions; DTO chỉ nhận URL kết quả.
+                if (model.ImageFile is not null)
+                {
+                    var imageUploadResult = await _uploadFile.UploadFileImage(model.ImageFile, "questions", cancellationToken);
+                    if (!imageUploadResult.IsSuccess)
+                    {
+                        ModelState.AddModelError(nameof(model.ImageFile), imageUploadResult.Error.Message);
+                    }
+                    else
+                    {
+                        imageUrl = imageUploadResult.Value;
+                    }
+                }
+
+                // Cloudinary quản lý audio bằng loại tài nguyên video và lưu trong questionaudio.
+                if (ModelState.IsValid && model.AudioFile is not null)
+                {
+                    var audioUploadResult = await _uploadFile.UploadFileAudio(model.AudioFile, "questionaudio", cancellationToken);
+                    if (!audioUploadResult.IsSuccess)
+                    {
+                        ModelState.AddModelError(nameof(model.AudioFile), audioUploadResult.Error.Message);
+                    }
+                    else
+                    {
+                        audioUrl = audioUploadResult.Value;
+                    }
+                }
+
+                // Controller đổi ViewModel của form câu hỏi thành DTO cho Service.
+                if (ModelState.IsValid)
+                {
+                    var request = new AdminQuestionFormDto
+                    {
+                        Id = model.Id,
+                        TestId = model.TestId,
+                        Content = model.Content,
+                        QuestionType = model.QuestionType,
+                        SectionName = model.SectionName,
+                        PartNumber = model.PartNumber,
+                        Order = model.Order,
+                        GroupCode = model.GroupCode,
+                        ContextText = model.ContextText,
+                        ImageUrl = imageUrl,
+                        AudioUrl = audioUrl,
+                        Instruction = model.Instruction,
+                        MaxWords = model.MaxWords,
+                        Answers = model.Answers.Select(answer => new AdminAnswerInputDto
+                        {
+                            Content = answer.Content,
+                            IsCorrect = answer.IsCorrect
+                        }).ToList()
+                    };
+                    var result = await _testService.SaveQuestionAsync(request, cancellationToken);
+                    if (result.IsSuccess)
+                    {
+                        TempData["SuccessMessage"] = "Đã lưu câu hỏi và đáp án.";
+                        return RedirectToAction(nameof(Questions), new { testId = model.TestId });
+                    }
+                    ModelState.AddModelError(string.Empty, result.Error.Message);
+                }
+            }
+
+            // Giữ URL hiện tại để form lỗi vẫn hiển thị link xem file đang lưu.
+            model.ImageUrl = imageUrl;
+            model.AudioUrl = audioUrl;
             while (model.Answers.Count < 4)
             {
                 model.Answers.Add(new AdminAnswerInputViewModel());
